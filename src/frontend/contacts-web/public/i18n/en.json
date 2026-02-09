@@ -13,7 +13,14 @@
     "OPEN_MENU": "Open menu",
     "CLOSE_MENU": "Close menu",
     "MAIN_NAV": "Main navigation",
-    "LANGUAGE_SELECTOR": "Language selector"
+    "LANGUAGE_SELECTOR": "Language selector",
+    "THEME_SWITCH": "Theme switcher"
+  },
+  "THEME": {
+    "LIGHT": "Light",
+    "DARK": "Dark",
+    "SWITCH_TO_LIGHT": "Switch to light mode",
+    "SWITCH_TO_DARK": "Switch to dark mode"
   },
   "COMMON": {
     "ALL": "All",

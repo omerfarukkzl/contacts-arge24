@@ -16,8 +16,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(37, 51, 67, 0.2);
-  background: linear-gradient(160deg, rgba(238, 224, 210, 0.92), rgba(223, 233, 244, 0.9));
+  border: 1px solid var(--avatar-border);
+  background: var(--avatar-bg);
   color: var(--ink-900);
   letter-spacing: 0.1em;
   font: 700 1rem/1 var(--font-body);
@@ -35,9 +35,9 @@
 }
 
 .info-grid article {
-  border: 1px solid rgba(37, 51, 67, 0.14);
+  border: 1px solid var(--detail-panel-border);
   border-radius: 0.9rem;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--detail-panel-bg);
   padding: 0.75rem;
 }
 

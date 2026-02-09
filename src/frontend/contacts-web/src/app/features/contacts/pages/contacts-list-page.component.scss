@@ -66,7 +66,7 @@ th,
 td {
   text-align: left;
   padding: 0.7rem 0.45rem;
-  border-bottom: 1px solid rgba(35, 47, 61, 0.12);
+  border-bottom: 1px solid var(--table-row-border);
   vertical-align: top;
 }
 
@@ -78,7 +78,7 @@ th {
 }
 
 tbody tr:hover td {
-  background: rgba(255, 255, 255, 0.56);
+  background: var(--table-row-hover-bg);
 }
 
 .table-actions {
@@ -98,10 +98,10 @@ tbody tr:hover td {
 .contact-card {
   display: grid;
   gap: 0.85rem;
-  border: 1px solid rgba(35, 47, 61, 0.14);
+  border: 1px solid var(--card-border);
   border-radius: 1rem;
   padding: 0.85rem;
-  background: rgba(255, 255, 255, 0.78);
+  background: var(--card-bg);
 }
 
 .identity {
@@ -117,8 +117,8 @@ tbody tr:hover td {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(35, 47, 61, 0.16);
-  background: linear-gradient(160deg, rgba(238, 224, 210, 0.88), rgba(223, 233, 244, 0.88));
+  border: 1px solid var(--avatar-border);
+  background: var(--avatar-bg);
   font: 700 0.77rem/1 var(--font-body);
   color: var(--ink-800);
   letter-spacing: 0.09em;

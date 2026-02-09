@@ -13,7 +13,14 @@
     "OPEN_MENU": "Menuyu ac",
     "CLOSE_MENU": "Menuyu kapat",
     "MAIN_NAV": "Ana gezinme",
-    "LANGUAGE_SELECTOR": "Dil secici"
+    "LANGUAGE_SELECTOR": "Dil secici",
+    "THEME_SWITCH": "Tema degistirici"
+  },
+  "THEME": {
+    "LIGHT": "Acik",
+    "DARK": "Koyu",
+    "SWITCH_TO_LIGHT": "Acik temaya gec",
+    "SWITCH_TO_DARK": "Koyu temaya gec"
   },
   "COMMON": {
     "ALL": "Tum",

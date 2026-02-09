@@ -47,15 +47,28 @@
       </a>
     </nav>
 
-    <div class="language-switcher" role="group" [attr.aria-label]="'A11Y.LANGUAGE_SELECTOR' | translate">
-      @for (language of supportedLanguages; track language) {
+    <div class="rail-controls">
+      <div class="theme-switcher" role="group" [attr.aria-label]="'A11Y.THEME_SWITCH' | translate">
         <button
           type="button"
-          [class.active]="currentLanguage() === language"
-          (click)="switchLanguage(language)">
-          {{ language.toUpperCase() }}
+          data-testid="theme-toggle"
+          [attr.aria-label]="(currentTheme() === 'dark' ? 'THEME.SWITCH_TO_LIGHT' : 'THEME.SWITCH_TO_DARK') | translate"
+          [attr.aria-pressed]="currentTheme() === 'dark'"
+          (click)="toggleTheme()">
+          {{ (currentTheme() === 'dark' ? 'THEME.DARK' : 'THEME.LIGHT') | translate }}
         </button>
-      }
+      </div>
+
+      <div class="language-switcher" role="group" [attr.aria-label]="'A11Y.LANGUAGE_SELECTOR' | translate">
+        @for (language of supportedLanguages; track language) {
+          <button
+            type="button"
+            [class.active]="currentLanguage() === language"
+            (click)="switchLanguage(language)">
+            {{ language.toUpperCase() }}
+          </button>
+        }
+      </div>
     </div>
   </aside>
 

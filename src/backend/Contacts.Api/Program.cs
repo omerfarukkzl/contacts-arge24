@@ -34,6 +34,7 @@ app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 app.UseCors("Frontend");
 app.UseAuthorization();
 app.MapControllers();
+app.MapGet("/", () => "Contacts API is running!");
 
 var shouldPrepareDatabase = builder.Environment.IsDevelopment() ||
                             builder.Configuration.GetValue<bool>("Database:ApplyMigrationsOnStartup");

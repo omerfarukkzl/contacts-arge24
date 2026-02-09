@@ -5,10 +5,12 @@ import { Contact, ContactListQuery, UpsertContactRequest } from '../models/conta
 import { PagedResult } from '../models/paged-result.model';
 import { CsvImportResult } from '../models/csv-import-result.model';
 
+import { environment } from '../../../environments/environment';
+
 @Injectable({ providedIn: 'root' })
 export class ContactsApiService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = '/api/contacts';
+  private readonly baseUrl = `${environment.apiUrl}/contacts`;
 
   getContacts(query: ContactListQuery): Observable<PagedResult<Contact>> {
     let params = new HttpParams()

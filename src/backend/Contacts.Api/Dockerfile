@@ -11,4 +11,5 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 EXPOSE 5050
+ENV ASPNETCORE_URLS=http://+:5050
 ENTRYPOINT ["dotnet", "Contacts.Api.dll"]

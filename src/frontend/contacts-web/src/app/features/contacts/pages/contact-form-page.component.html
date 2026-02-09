@@ -1,0 +1,76 @@
+<section class="form-card">
+  <header>
+    <h1>
+      {{ (isEditMode() ? 'FORM.EDIT_TITLE' : 'FORM.CREATE_TITLE') | translate }}
+    </h1>
+  </header>
+
+  @if (errorMessage(); as errorKey) {
+    <p class="error-message">{{ errorKey | translate }}</p>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="contact-form">
+    <label>
+      {{ 'CONTACTS.FIRST_NAME' | translate }}
+      <input type="text" formControlName="firstName" />
+    </label>
+
+    <label>
+      {{ 'CONTACTS.LAST_NAME' | translate }}
+      <input type="text" formControlName="lastName" />
+    </label>
+
+    <label>
+      {{ 'CONTACTS.PHONE' | translate }}
+      <input type="text" formControlName="phone" />
+    </label>
+
+    <label>
+      {{ 'CONTACTS.EMAIL' | translate }}
+      <input type="email" formControlName="email" />
+    </label>
+
+    <label>
+      {{ 'CONTACTS.COMPANY' | translate }}
+      <input type="text" formControlName="company" />
+    </label>
+
+    <label>
+      {{ 'CONTACTS.NOTES' | translate }}
+      <textarea formControlName="notes" rows="4"></textarea>
+    </label>
+
+    <label>
+      {{ 'CONTACTS.TAGS' | translate }}
+      <input type="text" formControlName="tagsText" />
+    </label>
+
+    <label class="checkbox">
+      <input type="checkbox" formControlName="isFavorite" />
+      {{ 'CONTACTS.FAVORITE' | translate }}
+    </label>
+
+    @if (form.controls.firstName.touched && form.controls.firstName.invalid) {
+      <p class="validation-error">{{ 'VALIDATION.REQUIRED_FIRST_NAME' | translate }}</p>
+    }
+
+    @if (form.controls.lastName.touched && form.controls.lastName.invalid) {
+      <p class="validation-error">{{ 'VALIDATION.REQUIRED_LAST_NAME' | translate }}</p>
+    }
+
+    @if (form.controls.phone.touched && form.controls.phone.invalid) {
+      <p class="validation-error">{{ 'VALIDATION.REQUIRED_PHONE' | translate }}</p>
+    }
+
+    @if (form.controls.email.touched && form.controls.email.errors?.['email']) {
+      <p class="validation-error">{{ 'VALIDATION.INVALID_EMAIL' | translate }}</p>
+    }
+
+    <div class="actions">
+      <button type="submit" [disabled]="loading()" class="primary-action">
+        {{ 'COMMON.SAVE' | translate }}
+      </button>
+      <a routerLink="/contacts" class="secondary-action">{{ 'COMMON.CANCEL' | translate }}</a>
+    </div>
+  </form>
+</section>

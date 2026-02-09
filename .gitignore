@@ -15,6 +15,11 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+## Guard against accidental mixed-separator output paths (e.g. bin\Debug on Unix)
+**/[Bb]in\\[Dd]ebug/
+**/[Bb]in\\[Rr]elease/
+**/[Oo]bj\\[Dd]ebug/
+**/[Oo]bj\\[Rr]elease/
 
 ## Visual Studio
 .vs/

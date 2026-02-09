@@ -1,0 +1,52 @@
+<section class="detail-card">
+  @if (errorMessage(); as errorKey) {
+    <p class="error-message">{{ errorKey | translate }}</p>
+  }
+
+  @if (loading()) {
+    <p class="status-message">{{ 'COMMON.LOADING' | translate }}</p>
+  }
+
+  @if (contact(); as currentContact) {
+    <header class="detail-header">
+      <div>
+        <h1>{{ currentContact.firstName }} {{ currentContact.lastName }}</h1>
+        <p>{{ currentContact.phone }}</p>
+      </div>
+
+      <div class="actions">
+        <button type="button" (click)="toggleFavorite()">
+          {{ currentContact.isFavorite ? '★' : '☆' }}
+        </button>
+        <a [routerLink]="['/contacts', currentContact.id, 'edit']">{{ 'COMMON.EDIT' | translate }}</a>
+        <button type="button" (click)="deleteContact()">{{ 'COMMON.DELETE' | translate }}</button>
+      </div>
+    </header>
+
+    <dl>
+      <div>
+        <dt>{{ 'CONTACTS.EMAIL' | translate }}</dt>
+        <dd>{{ currentContact.email || '-' }}</dd>
+      </div>
+
+      <div>
+        <dt>{{ 'CONTACTS.COMPANY' | translate }}</dt>
+        <dd>{{ currentContact.company || '-' }}</dd>
+      </div>
+
+      <div>
+        <dt>{{ 'CONTACTS.NOTES' | translate }}</dt>
+        <dd>{{ currentContact.notes || '-' }}</dd>
+      </div>
+
+      <div>
+        <dt>{{ 'CONTACTS.TAGS' | translate }}</dt>
+        <dd>{{ formatTags(currentContact.tags) || '-' }}</dd>
+      </div>
+    </dl>
+
+    <footer>
+      <a routerLink="/contacts" class="back-link">{{ 'COMMON.BACK' | translate }}</a>
+    </footer>
+  }
+</section>

@@ -1,0 +1,87 @@
+{
+  "APP": {
+    "TITLE": "Contacts ARGE24"
+  },
+  "NAV": {
+    "CONTACTS": "Contacts",
+    "IMPORT_EXPORT": "Import / Export"
+  },
+  "COMMON": {
+    "ALL": "All",
+    "APPLY": "Apply",
+    "RESET": "Reset",
+    "VIEW": "View",
+    "EDIT": "Edit",
+    "DELETE": "Delete",
+    "SAVE": "Save",
+    "CANCEL": "Cancel",
+    "BACK": "Back",
+    "UNDO": "Undo",
+    "NEXT": "Next",
+    "PREV": "Previous",
+    "LOADING": "Loading..."
+  },
+  "CONTACTS": {
+    "TITLE": "Contacts",
+    "SUBTITLE": "Search and manage your phone book.",
+    "NEW": "New Contact",
+    "IMPORT_EXPORT": "Import / Export",
+    "EMPTY": "No contacts found.",
+    "DELETED_WITH_UNDO": "Contact deleted. You can undo this action for 15 seconds.",
+    "TOTAL": "Total",
+    "FIRST_NAME": "First Name",
+    "LAST_NAME": "Last Name",
+    "PHONE": "Phone",
+    "EMAIL": "Email",
+    "COMPANY": "Company",
+    "NOTES": "Notes",
+    "TAGS": "Tags",
+    "FAVORITE": "Favorite",
+    "ACTIONS": "Actions"
+  },
+  "FILTERS": {
+    "SEARCH": "Search",
+    "TAG": "Tag",
+    "COMPANY": "Company",
+    "FAVORITE_ONLY": "Favorites only",
+    "SORT_BY": "Sort by",
+    "SORT_DIR": "Direction",
+    "SORT_FIRST_NAME": "First Name",
+    "SORT_LAST_NAME": "Last Name",
+    "SORT_CREATED_AT": "Created At",
+    "ASC": "Ascending",
+    "DESC": "Descending"
+  },
+  "FORM": {
+    "CREATE_TITLE": "Create Contact",
+    "EDIT_TITLE": "Edit Contact"
+  },
+  "VALIDATION": {
+    "REQUIRED_FIRST_NAME": "First name is required.",
+    "REQUIRED_LAST_NAME": "Last name is required.",
+    "REQUIRED_PHONE": "Phone is required.",
+    "INVALID_EMAIL": "Invalid email format."
+  },
+  "IMPORT_EXPORT": {
+    "TITLE": "CSV Import / Export",
+    "EXPORT_TITLE": "Export",
+    "IMPORT_TITLE": "Import",
+    "DOWNLOAD_CSV": "Download CSV",
+    "UPLOAD_CSV": "Upload CSV",
+    "EXPORT_SUCCESS": "CSV was generated and downloaded successfully.",
+    "NO_DATA_FOR_EXPORT": "No data matched the selected filters.",
+    "SELECT_FILE": "Choose CSV file",
+    "FILE_REQUIRED": "Please select a file first.",
+    "REPORT_TITLE": "Import Report",
+    "IMPORTED": "Imported",
+    "FAILED": "Failed",
+    "ROW": "Row",
+    "FIELD": "Field",
+    "MESSAGE": "Message",
+    "VALUE": "Value"
+  },
+  "ERRORS": {
+    "DUPLICATE_PHONE": "This phone number is already used by another contact.",
+    "REQUEST_FAILED": "Request failed. Please try again."
+  }
+}

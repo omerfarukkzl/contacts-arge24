@@ -5,7 +5,7 @@
 | Alan | Değer |
 |------|-------|
 | **Proje Adı** | Contacts ARGE24 |
-| **Versiyon** | 1.0 |
+| **Versiyon** | 1.1 |
 | **Tarih** | 2026-02-09 |
 | **Teknoloji Stack** | SQL Server (Docker) + .NET Core Web API + Angular |
 
@@ -263,7 +263,7 @@ PRIMARY KEY (ContactId, TagId)
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                        Backend                               │
-│                .NET Core Web API (Port 5000)                 │
+│                .NET Core Web API (Port 5050)                 │
 │              • Entity Framework Core                         │
 │              • AutoMapper                                    │
 │              • FluentValidation                              │
@@ -295,3 +295,10 @@ docs: dokümantasyon güncellendi
 refactor: kod iyileştirmesi
 test: test eklendi/güncellendi
 ```
+
+---
+
+## 13. Geliştirme Dili Kuralı
+
+- Proje codebase'i (dosya/klasör adları, class/function/variable isimleri, API endpointleri, DTO alanları, commit başlıkları) İngilizce terimler kullanılarak geliştirilmelidir.
+- Kod içi yorumlar (comments) Türkçe olabilir.

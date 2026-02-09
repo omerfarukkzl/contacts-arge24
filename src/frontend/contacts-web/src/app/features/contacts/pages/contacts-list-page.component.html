@@ -1,0 +1,135 @@
+<section class="page-card">
+  <header class="page-header">
+    <div>
+      <h1>{{ 'CONTACTS.TITLE' | translate }}</h1>
+      <p>{{ 'CONTACTS.SUBTITLE' | translate }}</p>
+    </div>
+
+    <div class="header-actions">
+      <a routerLink="/contacts/new" class="primary-action">{{ 'CONTACTS.NEW' | translate }}</a>
+      <a routerLink="/contacts/import-export" class="secondary-action">
+        {{ 'CONTACTS.IMPORT_EXPORT' | translate }}
+      </a>
+    </div>
+  </header>
+
+  <form class="filters" [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+    <label>
+      {{ 'FILTERS.SEARCH' | translate }}
+      <input type="text" formControlName="search" />
+    </label>
+
+    <label>
+      {{ 'FILTERS.TAG' | translate }}
+      <select formControlName="tag">
+        <option value="">{{ 'COMMON.ALL' | translate }}</option>
+        @for (tag of tags(); track tag.id) {
+          <option [value]="tag.name">{{ tag.name }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      {{ 'FILTERS.COMPANY' | translate }}
+      <input type="text" formControlName="company" />
+    </label>
+
+    <label>
+      {{ 'FILTERS.SORT_BY' | translate }}
+      <select formControlName="sortBy">
+        <option value="firstName">{{ 'FILTERS.SORT_FIRST_NAME' | translate }}</option>
+        <option value="lastName">{{ 'FILTERS.SORT_LAST_NAME' | translate }}</option>
+        <option value="createdAt">{{ 'FILTERS.SORT_CREATED_AT' | translate }}</option>
+      </select>
+    </label>
+
+    <label>
+      {{ 'FILTERS.SORT_DIR' | translate }}
+      <select formControlName="sortDir">
+        <option value="asc">{{ 'FILTERS.ASC' | translate }}</option>
+        <option value="desc">{{ 'FILTERS.DESC' | translate }}</option>
+      </select>
+    </label>
+
+    <label class="checkbox">
+      <input type="checkbox" formControlName="favoriteOnly" />
+      {{ 'FILTERS.FAVORITE_ONLY' | translate }}
+    </label>
+
+    <div class="filter-actions">
+      <button type="submit" class="primary-action">{{ 'COMMON.APPLY' | translate }}</button>
+      <button type="button" class="ghost-action" (click)="resetFilters()">
+        {{ 'COMMON.RESET' | translate }}
+      </button>
+    </div>
+  </form>
+
+  @if (errorMessage(); as errorKey) {
+    <p class="error-message">{{ errorKey | translate }}</p>
+  }
+
+  @if (undoVisible()) {
+    <div class="undo-banner">
+      <span>{{ 'CONTACTS.DELETED_WITH_UNDO' | translate }}</span>
+      <button type="button" (click)="undoDelete()">{{ 'COMMON.UNDO' | translate }}</button>
+    </div>
+  }
+
+  @if (loading()) {
+    <p class="status-message">{{ 'COMMON.LOADING' | translate }}</p>
+  } @else if (contacts().length === 0) {
+    <p class="status-message">{{ 'CONTACTS.EMPTY' | translate }}</p>
+  } @else {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'CONTACTS.FIRST_NAME' | translate }}</th>
+            <th>{{ 'CONTACTS.LAST_NAME' | translate }}</th>
+            <th>{{ 'CONTACTS.PHONE' | translate }}</th>
+            <th>{{ 'CONTACTS.EMAIL' | translate }}</th>
+            <th>{{ 'CONTACTS.COMPANY' | translate }}</th>
+            <th>{{ 'CONTACTS.TAGS' | translate }}</th>
+            <th>{{ 'CONTACTS.ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (contact of contacts(); track contact.id) {
+            <tr>
+              <td>{{ contact.firstName }}</td>
+              <td>{{ contact.lastName }}</td>
+              <td>{{ contact.phone }}</td>
+              <td>{{ contact.email || '-' }}</td>
+              <td>{{ contact.company || '-' }}</td>
+              <td>{{ formatTags(contact.tags) || '-' }}</td>
+              <td class="table-actions">
+                <button type="button" (click)="toggleFavorite(contact)">
+                  {{ contact.isFavorite ? '★' : '☆' }}
+                </button>
+                <a [routerLink]="['/contacts', contact.id]">{{ 'COMMON.VIEW' | translate }}</a>
+                <a [routerLink]="['/contacts', contact.id, 'edit']">{{ 'COMMON.EDIT' | translate }}</a>
+                <button type="button" (click)="deleteContact(contact)">
+                  {{ 'COMMON.DELETE' | translate }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <footer class="pagination">
+    <p>{{ 'CONTACTS.TOTAL' | translate }}: {{ totalCount() }}</p>
+
+    <div class="pagination-actions">
+      <button type="button" (click)="goToPreviousPage()" [disabled]="!hasPreviousPage() || loading()">
+        {{ 'COMMON.PREV' | translate }}
+      </button>
+      <span>{{ page() }} / {{ totalPages() || 1 }}</span>
+      <button type="button" (click)="goToNextPage()" [disabled]="!hasNextPage() || loading()">
+        {{ 'COMMON.NEXT' | translate }}
+      </button>
+    </div>
+  </footer>
+</section>

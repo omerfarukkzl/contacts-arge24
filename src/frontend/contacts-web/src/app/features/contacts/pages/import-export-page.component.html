@@ -1,0 +1,91 @@
+<section class="io-card">
+  <header>
+    <h1>{{ 'IMPORT_EXPORT.TITLE' | translate }}</h1>
+  </header>
+
+  @if (errorMessage(); as errorKey) {
+    <p class="error-message">{{ errorKey | translate }}</p>
+  }
+
+  @if (infoMessage(); as infoKey) {
+    <p class="info-message">{{ infoKey | translate }}</p>
+  }
+
+  <div class="io-grid">
+    <article>
+      <h2>{{ 'IMPORT_EXPORT.EXPORT_TITLE' | translate }}</h2>
+      <form [formGroup]="exportForm" (ngSubmit)="exportCsv()" class="io-form">
+        <label>
+          {{ 'FILTERS.SEARCH' | translate }}
+          <input type="text" formControlName="search" />
+        </label>
+
+        <label>
+          {{ 'FILTERS.TAG' | translate }}
+          <input type="text" formControlName="tag" />
+        </label>
+
+        <button type="submit" class="primary-action" [disabled]="loading()">
+          {{ 'IMPORT_EXPORT.DOWNLOAD_CSV' | translate }}
+        </button>
+      </form>
+    </article>
+
+    <article>
+      <h2>{{ 'IMPORT_EXPORT.IMPORT_TITLE' | translate }}</h2>
+      <div class="io-form">
+        <label>
+          {{ 'IMPORT_EXPORT.SELECT_FILE' | translate }}
+          <input type="file" accept=".csv" (change)="onFileSelected($event)" />
+        </label>
+
+        <button type="button" class="primary-action" [disabled]="loading()" (click)="importCsv()">
+          {{ 'IMPORT_EXPORT.UPLOAD_CSV' | translate }}
+        </button>
+      </div>
+    </article>
+  </div>
+
+  @if (loading()) {
+    <p class="status-message">{{ 'COMMON.LOADING' | translate }}</p>
+  }
+
+  @if (report(); as importReport) {
+    <section class="report">
+      <h2>{{ 'IMPORT_EXPORT.REPORT_TITLE' | translate }}</h2>
+      <p>
+        {{ 'IMPORT_EXPORT.IMPORTED' | translate }}: {{ importReport.importedCount }} |
+        {{ 'IMPORT_EXPORT.FAILED' | translate }}: {{ importReport.failedCount }}
+      </p>
+
+      @if (importReport.errors.length > 0) {
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>{{ 'IMPORT_EXPORT.ROW' | translate }}</th>
+                <th>{{ 'IMPORT_EXPORT.FIELD' | translate }}</th>
+                <th>{{ 'IMPORT_EXPORT.MESSAGE' | translate }}</th>
+                <th>{{ 'IMPORT_EXPORT.VALUE' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (error of importReport.errors; track $index) {
+                <tr>
+                  <td>{{ error.rowNumber }}</td>
+                  <td>{{ error.field }}</td>
+                  <td>{{ error.message }}</td>
+                  <td>{{ error.rawValue || '-' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  }
+
+  <footer>
+    <a routerLink="/contacts" class="secondary-action">{{ 'COMMON.BACK' | translate }}</a>
+  </footer>
+</section>

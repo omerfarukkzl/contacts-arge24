@@ -1,0 +1,87 @@
+{
+  "APP": {
+    "TITLE": "Contacts ARGE24"
+  },
+  "NAV": {
+    "CONTACTS": "Kisiler",
+    "IMPORT_EXPORT": "Ice Aktar / Disa Aktar"
+  },
+  "COMMON": {
+    "ALL": "Tum",
+    "APPLY": "Uygula",
+    "RESET": "Sifirla",
+    "VIEW": "Goruntule",
+    "EDIT": "Duzenle",
+    "DELETE": "Sil",
+    "SAVE": "Kaydet",
+    "CANCEL": "Iptal",
+    "BACK": "Geri",
+    "UNDO": "Geri Al",
+    "NEXT": "Sonraki",
+    "PREV": "Onceki",
+    "LOADING": "Yukleniyor..."
+  },
+  "CONTACTS": {
+    "TITLE": "Kisiler",
+    "SUBTITLE": "Rehberinizi arayin ve yonetin.",
+    "NEW": "Yeni Kisi",
+    "IMPORT_EXPORT": "Ice Aktar / Disa Aktar",
+    "EMPTY": "Kisi bulunamadi.",
+    "DELETED_WITH_UNDO": "Kisi silindi. Bu islemi 15 saniye icinde geri alabilirsiniz.",
+    "TOTAL": "Toplam",
+    "FIRST_NAME": "Ad",
+    "LAST_NAME": "Soyad",
+    "PHONE": "Telefon",
+    "EMAIL": "E-posta",
+    "COMPANY": "Sirket",
+    "NOTES": "Notlar",
+    "TAGS": "Etiketler",
+    "FAVORITE": "Favori",
+    "ACTIONS": "Aksiyonlar"
+  },
+  "FILTERS": {
+    "SEARCH": "Arama",
+    "TAG": "Etiket",
+    "COMPANY": "Sirket",
+    "FAVORITE_ONLY": "Sadece favoriler",
+    "SORT_BY": "Siralama",
+    "SORT_DIR": "Yon",
+    "SORT_FIRST_NAME": "Ada gore",
+    "SORT_LAST_NAME": "Soyada gore",
+    "SORT_CREATED_AT": "Olusturma tarihi",
+    "ASC": "Artan",
+    "DESC": "Azalan"
+  },
+  "FORM": {
+    "CREATE_TITLE": "Kisi Ekle",
+    "EDIT_TITLE": "Kisi Duzenle"
+  },
+  "VALIDATION": {
+    "REQUIRED_FIRST_NAME": "Ad zorunludur.",
+    "REQUIRED_LAST_NAME": "Soyad zorunludur.",
+    "REQUIRED_PHONE": "Telefon zorunludur.",
+    "INVALID_EMAIL": "E-posta formati gecersiz."
+  },
+  "IMPORT_EXPORT": {
+    "TITLE": "CSV Ice Aktar / Disa Aktar",
+    "EXPORT_TITLE": "Disa Aktar",
+    "IMPORT_TITLE": "Ice Aktar",
+    "DOWNLOAD_CSV": "CSV Indir",
+    "UPLOAD_CSV": "CSV Yukle",
+    "EXPORT_SUCCESS": "CSV basariyla olusturuldu ve indirildi.",
+    "NO_DATA_FOR_EXPORT": "Secilen filtrelere uygun veri bulunamadi.",
+    "SELECT_FILE": "CSV dosyasi sec",
+    "FILE_REQUIRED": "Once bir dosya secin.",
+    "REPORT_TITLE": "Ice Aktarma Raporu",
+    "IMPORTED": "Basarili",
+    "FAILED": "Hatali",
+    "ROW": "Satir",
+    "FIELD": "Alan",
+    "MESSAGE": "Mesaj",
+    "VALUE": "Deger"
+  },
+  "ERRORS": {
+    "DUPLICATE_PHONE": "Bu telefon numarasi zaten baska bir kiside kayitli.",
+    "REQUEST_FAILED": "Islem basarisiz oldu. Tekrar deneyin."
+  }
+}

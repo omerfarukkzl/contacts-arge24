@@ -67,7 +67,7 @@ table {
 th,
 td {
   text-align: left;
-  border-bottom: 1px solid rgba(35, 47, 61, 0.14);
+  border-bottom: 1px solid var(--table-row-border);
   padding: 0.55rem 0.44rem;
 }
 

@@ -5,9 +5,14 @@ import { TranslateModule } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
 import { LanguageService } from './core/services/language.service';
+import { ThemeService } from './core/services/theme.service';
 
 function initializeLanguage(languageService: LanguageService): () => void {
   return () => languageService.initialize();
+}
+
+function initializeTheme(themeService: ThemeService): () => void {
+  return () => themeService.initialize();
 }
 
 export const appConfig: ApplicationConfig = {
@@ -28,6 +33,12 @@ export const appConfig: ApplicationConfig = {
       provide: APP_INITIALIZER,
       useFactory: initializeLanguage,
       deps: [LanguageService],
+      multi: true
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeTheme,
+      deps: [ThemeService],
       multi: true
     }
   ]

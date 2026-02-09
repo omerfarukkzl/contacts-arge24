@@ -1,76 +1,88 @@
-<section class="form-card">
-  <header>
-    <h1>
-      {{ (isEditMode() ? 'FORM.EDIT_TITLE' : 'FORM.CREATE_TITLE') | translate }}
-    </h1>
+<section class="page-stack fade-slide-in">
+  <header class="page-hero">
+    <span class="page-eyebrow">
+      {{ (isEditMode() ? 'FORM.PAGE_CONTEXT_EDIT' : 'FORM.PAGE_CONTEXT_CREATE') | translate }}
+    </span>
+    <h1>{{ (isEditMode() ? 'FORM.EDIT_TITLE' : 'FORM.CREATE_TITLE') | translate }}</h1>
+    <p>{{ 'FORM.SUBTITLE' | translate }}</p>
   </header>
 
   @if (errorMessage(); as errorKey) {
-    <p class="error-message">{{ errorKey | translate }}</p>
+    <section class="status-banner error">
+      <p>{{ errorKey | translate }}</p>
+    </section>
   }
 
-  <form [formGroup]="form" (ngSubmit)="submit()" class="contact-form">
-    <label>
-      {{ 'CONTACTS.FIRST_NAME' | translate }}
-      <input type="text" formControlName="firstName" />
-    </label>
+  <section class="surface-panel">
+    <div class="panel-body">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="editor-form">
+        <div class="form-grid">
+          <label>
+            <span>{{ 'CONTACTS.FIRST_NAME' | translate }}</span>
+            <input type="text" formControlName="firstName" />
+          </label>
 
-    <label>
-      {{ 'CONTACTS.LAST_NAME' | translate }}
-      <input type="text" formControlName="lastName" />
-    </label>
+          <label>
+            <span>{{ 'CONTACTS.LAST_NAME' | translate }}</span>
+            <input type="text" formControlName="lastName" />
+          </label>
 
-    <label>
-      {{ 'CONTACTS.PHONE' | translate }}
-      <input type="text" formControlName="phone" />
-    </label>
+          <label>
+            <span>{{ 'CONTACTS.PHONE' | translate }}</span>
+            <input type="text" formControlName="phone" />
+          </label>
 
-    <label>
-      {{ 'CONTACTS.EMAIL' | translate }}
-      <input type="email" formControlName="email" />
-    </label>
+          <label>
+            <span>{{ 'CONTACTS.EMAIL' | translate }}</span>
+            <input type="email" formControlName="email" />
+          </label>
 
-    <label>
-      {{ 'CONTACTS.COMPANY' | translate }}
-      <input type="text" formControlName="company" />
-    </label>
+          <label>
+            <span>{{ 'CONTACTS.COMPANY' | translate }}</span>
+            <input type="text" formControlName="company" />
+          </label>
 
-    <label>
-      {{ 'CONTACTS.NOTES' | translate }}
-      <textarea formControlName="notes" rows="4"></textarea>
-    </label>
+          <label>
+            <span>{{ 'CONTACTS.TAGS' | translate }}</span>
+            <input type="text" formControlName="tagsText" [placeholder]="'FORM.TAGS_HINT' | translate" />
+          </label>
+        </div>
 
-    <label>
-      {{ 'CONTACTS.TAGS' | translate }}
-      <input type="text" formControlName="tagsText" />
-    </label>
+        <label class="notes-field">
+          <span>{{ 'CONTACTS.NOTES' | translate }}</span>
+          <textarea formControlName="notes" rows="4"></textarea>
+        </label>
 
-    <label class="checkbox">
-      <input type="checkbox" formControlName="isFavorite" />
-      {{ 'CONTACTS.FAVORITE' | translate }}
-    </label>
+        <label class="favorite-toggle">
+          <input type="checkbox" formControlName="isFavorite" />
+          <span>{{ 'CONTACTS.FAVORITE' | translate }}</span>
+        </label>
 
-    @if (form.controls.firstName.touched && form.controls.firstName.invalid) {
-      <p class="validation-error">{{ 'VALIDATION.REQUIRED_FIRST_NAME' | translate }}</p>
-    }
+        <div class="validation-list">
+          @if (form.controls.firstName.touched && form.controls.firstName.invalid) {
+            <p>{{ 'VALIDATION.REQUIRED_FIRST_NAME' | translate }}</p>
+          }
 
-    @if (form.controls.lastName.touched && form.controls.lastName.invalid) {
-      <p class="validation-error">{{ 'VALIDATION.REQUIRED_LAST_NAME' | translate }}</p>
-    }
+          @if (form.controls.lastName.touched && form.controls.lastName.invalid) {
+            <p>{{ 'VALIDATION.REQUIRED_LAST_NAME' | translate }}</p>
+          }
 
-    @if (form.controls.phone.touched && form.controls.phone.invalid) {
-      <p class="validation-error">{{ 'VALIDATION.REQUIRED_PHONE' | translate }}</p>
-    }
+          @if (form.controls.phone.touched && form.controls.phone.invalid) {
+            <p>{{ 'VALIDATION.REQUIRED_PHONE' | translate }}</p>
+          }
 
-    @if (form.controls.email.touched && form.controls.email.errors?.['email']) {
-      <p class="validation-error">{{ 'VALIDATION.INVALID_EMAIL' | translate }}</p>
-    }
+          @if (form.controls.email.touched && form.controls.email.errors?.['email']) {
+            <p>{{ 'VALIDATION.INVALID_EMAIL' | translate }}</p>
+          }
+        </div>
 
-    <div class="actions">
-      <button type="submit" [disabled]="loading()" class="primary-action">
-        {{ 'COMMON.SAVE' | translate }}
-      </button>
-      <a routerLink="/contacts" class="secondary-action">{{ 'COMMON.CANCEL' | translate }}</a>
+        <div class="action-row">
+          <button type="submit" [disabled]="loading()" class="btn btn-primary">
+            {{ 'COMMON.SAVE' | translate }}
+          </button>
+          <a routerLink="/contacts" class="btn btn-secondary">{{ 'COMMON.CANCEL' | translate }}</a>
+        </div>
+      </form>
     </div>
-  </form>
+  </section>
 </section>

@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy, computed, inject, signal
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   Contact,
   ContactListQuery,
@@ -13,7 +14,6 @@ import {
 import { Tag } from '../../../core/models/tag.model';
 import { ContactsApiService } from '../../../core/services/contacts-api.service';
 import { TagsApiService } from '../../../core/services/tags-api.service';
-import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-contacts-list-page',
@@ -27,6 +27,7 @@ export class ContactsListPageComponent implements OnDestroy {
   private readonly contactsApiService = inject(ContactsApiService);
   private readonly tagsApiService = inject(TagsApiService);
   private readonly formBuilder = inject(FormBuilder);
+  private readonly translateService = inject(TranslateService);
 
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
@@ -44,6 +45,7 @@ export class ContactsListPageComponent implements OnDestroy {
 
   readonly hasPreviousPage = computed(() => this.page() > 1);
   readonly hasNextPage = computed(() => this.page() < this.totalPages());
+  readonly hasContacts = computed(() => this.contacts().length > 0);
 
   readonly filterForm = this.formBuilder.nonNullable.group({
     search: [''],
@@ -123,7 +125,7 @@ export class ContactsListPageComponent implements OnDestroy {
   }
 
   async deleteContact(contact: Contact): Promise<void> {
-    const accepted = window.confirm('Delete this contact?');
+    const accepted = window.confirm(this.translateService.instant('CONTACTS.CONFIRM_DELETE'));
     if (!accepted) {
       return;
     }
@@ -161,6 +163,10 @@ export class ContactsListPageComponent implements OnDestroy {
 
   formatTags(tags: Tag[]): string {
     return tags.map((tag) => tag.name).join(', ');
+  }
+
+  getInitials(contact: Contact): string {
+    return `${contact.firstName.charAt(0)}${contact.lastName.charAt(0)}`.toUpperCase();
   }
 
   private async loadTags(): Promise<void> {

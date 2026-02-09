@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
 import { Contact, UpsertContactRequest } from '../../../core/models/contact.model';
 import { ContactsApiService } from '../../../core/services/contacts-api.service';
@@ -19,6 +19,7 @@ export class ContactDetailPageComponent {
   private readonly contactsApiService = inject(ContactsApiService);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly translateService = inject(TranslateService);
 
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
@@ -72,7 +73,7 @@ export class ContactDetailPageComponent {
       return;
     }
 
-    const accepted = window.confirm('Delete this contact?');
+    const accepted = window.confirm(this.translateService.instant('CONTACTS.CONFIRM_DELETE'));
     if (!accepted) {
       return;
     }
@@ -91,6 +92,10 @@ export class ContactDetailPageComponent {
 
   formatTags(tags: Tag[]): string {
     return tags.map((tag) => tag.name).join(', ');
+  }
+
+  getInitials(contact: Contact): string {
+    return `${contact.firstName.charAt(0)}${contact.lastName.charAt(0)}`.toUpperCase();
   }
 
   private async loadContact(id: string): Promise<void> {

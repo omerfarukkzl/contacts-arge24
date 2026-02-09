@@ -1,52 +1,64 @@
-<section class="detail-card">
+<section class="page-stack fade-slide-in">
   @if (errorMessage(); as errorKey) {
-    <p class="error-message">{{ errorKey | translate }}</p>
+    <section class="status-banner error">
+      <p>{{ errorKey | translate }}</p>
+    </section>
   }
 
   @if (loading()) {
-    <p class="status-message">{{ 'COMMON.LOADING' | translate }}</p>
+    <section class="surface-panel">
+      <div class="panel-body">
+        <p class="state-text">{{ 'COMMON.LOADING' | translate }}</p>
+      </div>
+    </section>
   }
 
   @if (contact(); as currentContact) {
-    <header class="detail-header">
-      <div>
-        <h1>{{ currentContact.firstName }} {{ currentContact.lastName }}</h1>
-        <p>{{ currentContact.phone }}</p>
+    <header class="page-hero">
+      <span class="page-eyebrow">{{ 'CONTACTS.DETAIL_CONTEXT' | translate }}</span>
+      <div class="identity">
+        <span class="avatar">{{ getInitials(currentContact) }}</span>
+        <div>
+          <h1>{{ currentContact.firstName }} {{ currentContact.lastName }}</h1>
+          <p>{{ currentContact.phone }}</p>
+        </div>
       </div>
-
-      <div class="actions">
-        <button type="button" (click)="toggleFavorite()">
+      <div class="action-row">
+        <button type="button" class="btn btn-secondary" (click)="toggleFavorite()">
           {{ currentContact.isFavorite ? '★' : '☆' }}
         </button>
-        <a [routerLink]="['/contacts', currentContact.id, 'edit']">{{ 'COMMON.EDIT' | translate }}</a>
-        <button type="button" (click)="deleteContact()">{{ 'COMMON.DELETE' | translate }}</button>
+        <a [routerLink]="['/contacts', currentContact.id, 'edit']" class="btn btn-secondary">
+          {{ 'COMMON.EDIT' | translate }}
+        </a>
+        <button type="button" class="btn btn-danger" (click)="deleteContact()">
+          {{ 'COMMON.DELETE' | translate }}
+        </button>
       </div>
     </header>
 
-    <dl>
-      <div>
-        <dt>{{ 'CONTACTS.EMAIL' | translate }}</dt>
-        <dd>{{ currentContact.email || '-' }}</dd>
+    <section class="surface-panel">
+      <div class="panel-body info-grid">
+        <article>
+          <h2>{{ 'CONTACTS.EMAIL' | translate }}</h2>
+          <p>{{ currentContact.email || '-' }}</p>
+        </article>
+        <article>
+          <h2>{{ 'CONTACTS.COMPANY' | translate }}</h2>
+          <p>{{ currentContact.company || '-' }}</p>
+        </article>
+        <article>
+          <h2>{{ 'CONTACTS.NOTES' | translate }}</h2>
+          <p class="multiline">{{ currentContact.notes || '-' }}</p>
+        </article>
+        <article>
+          <h2>{{ 'CONTACTS.TAGS' | translate }}</h2>
+          <p>{{ formatTags(currentContact.tags) || '-' }}</p>
+        </article>
       </div>
+    </section>
 
-      <div>
-        <dt>{{ 'CONTACTS.COMPANY' | translate }}</dt>
-        <dd>{{ currentContact.company || '-' }}</dd>
-      </div>
-
-      <div>
-        <dt>{{ 'CONTACTS.NOTES' | translate }}</dt>
-        <dd>{{ currentContact.notes || '-' }}</dd>
-      </div>
-
-      <div>
-        <dt>{{ 'CONTACTS.TAGS' | translate }}</dt>
-        <dd>{{ formatTags(currentContact.tags) || '-' }}</dd>
-      </div>
-    </dl>
-
-    <footer>
-      <a routerLink="/contacts" class="back-link">{{ 'COMMON.BACK' | translate }}</a>
+    <footer class="action-row">
+      <a routerLink="/contacts" class="btn btn-secondary">{{ 'COMMON.BACK' | translate }}</a>
     </footer>
   }
 </section>

@@ -1,0 +1,65 @@
+<div class="shell">
+  <div class="ambient ambient-north"></div>
+  <div class="ambient ambient-east"></div>
+  <div class="ambient ambient-noise"></div>
+
+  <button
+    class="mobile-menu-toggle"
+    type="button"
+    [attr.aria-label]="(mobileNavOpen() ? 'A11Y.CLOSE_MENU' : 'A11Y.OPEN_MENU') | translate"
+    [attr.aria-expanded]="mobileNavOpen()"
+    (click)="toggleMobileNav()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  @if (mobileNavOpen()) {
+    <button
+      type="button"
+      class="nav-backdrop"
+      [attr.aria-label]="'A11Y.CLOSE_MENU' | translate"
+      (click)="closeMobileNav()"></button>
+  }
+
+  <aside class="nav-rail" [class.open]="mobileNavOpen()">
+    <a class="brand" routerLink="/contacts" (click)="closeMobileNav()">
+      <span class="brand-mark">C24</span>
+      <span class="brand-copy">
+        <strong>{{ 'APP.TITLE' | translate }}</strong>
+        <small>{{ 'APP.TAGLINE' | translate }}</small>
+      </span>
+    </a>
+
+    <nav class="menu" [attr.aria-label]="'A11Y.MAIN_NAV' | translate">
+      <a
+        routerLink="/contacts"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeMobileNav()">
+        <span class="menu-eyebrow">{{ 'NAV.SECTION_MAIN' | translate }}</span>
+        <span class="menu-label">{{ 'NAV.CONTACTS' | translate }}</span>
+      </a>
+
+      <a routerLink="/contacts/import-export" routerLinkActive="active" (click)="closeMobileNav()">
+        <span class="menu-eyebrow">{{ 'NAV.SECTION_OPERATIONS' | translate }}</span>
+        <span class="menu-label">{{ 'NAV.IMPORT_EXPORT' | translate }}</span>
+      </a>
+    </nav>
+
+    <div class="language-switcher" role="group" [attr.aria-label]="'A11Y.LANGUAGE_SELECTOR' | translate">
+      @for (language of supportedLanguages; track language) {
+        <button
+          type="button"
+          [class.active]="currentLanguage() === language"
+          (click)="switchLanguage(language)">
+          {{ language.toUpperCase() }}
+        </button>
+      }
+    </div>
+  </aside>
+
+  <main class="content-frame" (click)="closeMobileNav()">
+    <router-outlet />
+  </main>
+</div>

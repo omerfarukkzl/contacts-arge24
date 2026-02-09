@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -24,6 +24,7 @@ export class ImportExportPageComponent {
   readonly infoMessage = signal<string | null>(null);
   readonly report = signal<CsvImportResult | null>(null);
   readonly selectedFile = signal<File | null>(null);
+  readonly selectedFileName = computed(() => this.selectedFile()?.name ?? null);
 
   readonly exportForm = this.formBuilder.nonNullable.group({
     search: [''],
@@ -63,6 +64,7 @@ export class ImportExportPageComponent {
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.selectedFile.set(input.files?.[0] ?? null);
+    this.errorMessage.set(null);
   }
 
   async importCsv(): Promise<void> {
@@ -74,6 +76,7 @@ export class ImportExportPageComponent {
 
     this.loading.set(true);
     this.errorMessage.set(null);
+    this.infoMessage.set(null);
 
     try {
       const importResult = await firstValueFrom(this.contactsApiService.importContacts(file));

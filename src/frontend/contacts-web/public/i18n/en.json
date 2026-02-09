@@ -1,10 +1,19 @@
 {
   "APP": {
-    "TITLE": "Contacts ARGE24"
+    "TITLE": "Contacts ARGE24",
+    "TAGLINE": "Editorial phonebook workspace"
   },
   "NAV": {
     "CONTACTS": "Contacts",
-    "IMPORT_EXPORT": "Import / Export"
+    "IMPORT_EXPORT": "Import / Export",
+    "SECTION_MAIN": "Core area",
+    "SECTION_OPERATIONS": "Operations"
+  },
+  "A11Y": {
+    "OPEN_MENU": "Open menu",
+    "CLOSE_MENU": "Close menu",
+    "MAIN_NAV": "Main navigation",
+    "LANGUAGE_SELECTOR": "Language selector"
   },
   "COMMON": {
     "ALL": "All",
@@ -24,10 +33,13 @@
   "CONTACTS": {
     "TITLE": "Contacts",
     "SUBTITLE": "Search and manage your phone book.",
+    "PAGE_CONTEXT": "Contact directory",
     "NEW": "New Contact",
     "IMPORT_EXPORT": "Import / Export",
     "EMPTY": "No contacts found.",
     "DELETED_WITH_UNDO": "Contact deleted. You can undo this action for 15 seconds.",
+    "CONFIRM_DELETE": "Do you want to delete this contact?",
+    "DETAIL_CONTEXT": "Contact detail",
     "TOTAL": "Total",
     "FIRST_NAME": "First Name",
     "LAST_NAME": "Last Name",
@@ -41,6 +53,7 @@
   },
   "FILTERS": {
     "SEARCH": "Search",
+    "SEARCH_PLACEHOLDER": "Search by name, phone, or email",
     "TAG": "Tag",
     "COMPANY": "Company",
     "FAVORITE_ONLY": "Favorites only",
@@ -54,7 +67,11 @@
   },
   "FORM": {
     "CREATE_TITLE": "Create Contact",
-    "EDIT_TITLE": "Edit Contact"
+    "EDIT_TITLE": "Edit Contact",
+    "PAGE_CONTEXT_CREATE": "New record",
+    "PAGE_CONTEXT_EDIT": "Edit record",
+    "SUBTITLE": "Manage core profile data and tags in one workflow.",
+    "TAGS_HINT": "Separate tags with comma or semicolon"
   },
   "VALIDATION": {
     "REQUIRED_FIRST_NAME": "First name is required.",
@@ -64,13 +81,18 @@
   },
   "IMPORT_EXPORT": {
     "TITLE": "CSV Import / Export",
+    "PAGE_CONTEXT": "Data transfer",
+    "SUBTITLE": "Export filtered data or import records in batch.",
     "EXPORT_TITLE": "Export",
     "IMPORT_TITLE": "Import",
+    "EXPORT_HELP": "Generate and download CSV based on selected filters.",
+    "IMPORT_HELP": "Upload a CSV file to import multiple contacts at once.",
     "DOWNLOAD_CSV": "Download CSV",
     "UPLOAD_CSV": "Upload CSV",
     "EXPORT_SUCCESS": "CSV was generated and downloaded successfully.",
     "NO_DATA_FOR_EXPORT": "No data matched the selected filters.",
     "SELECT_FILE": "Choose CSV file",
+    "NO_FILE_SELECTED": "No file selected yet.",
     "FILE_REQUIRED": "Please select a file first.",
     "REPORT_TITLE": "Import Report",
     "IMPORTED": "Imported",

@@ -22,6 +22,11 @@ Contacts ARGE24 is a phone book web application built with:
 - `tests/Contacts.Api.Tests` -> API unit/integration tests
 - `docker-compose.yml` -> SQL Server + API + Web containers
 
+## Component Documentation
+
+- Frontend docs: `docs/FRONTEND.md`
+- Backend docs: `docs/BACKEND.md`
+
 ## Local Run (without Docker)
 
 1. Start SQL Server container:

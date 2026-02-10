@@ -4,16 +4,19 @@ using Contacts.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Contacts.Api.Data.Migrations
+namespace Contacts.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ContactsDbContext))]
-    partial class ContactsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260210121131_AddNewFields")]
+    partial class AddNewFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

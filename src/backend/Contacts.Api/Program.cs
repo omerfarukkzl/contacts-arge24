@@ -1,14 +1,19 @@
 using Contacts.Api.Data;
+using Contacts.Api.DependencyInjection;
 using Contacts.Api.Infrastructure;
-using Contacts.Api.Services;
 using Contacts.Api.Validation;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using NLog.Web;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders();
+builder.Host.UseNLog();
+
 var firebaseProjectId = builder.Configuration["Authentication:Firebase:ProjectId"];
 var firebaseIssuer = builder.Configuration["Authentication:Firebase:Issuer"];
 
@@ -24,12 +29,11 @@ if (string.IsNullOrWhiteSpace(firebaseIssuer))
 
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
-builder.Services.AddDbContext<ContactsDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateContactRequestValidator>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -48,10 +52,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 builder.Services.AddAuthorization();
-builder.Services.AddScoped<IAppUserService, AppUserService>();
-builder.Services.AddScoped<ICurrentUserContextAccessor, CurrentUserContextAccessor>();
-builder.Services.AddScoped<ITagService, TagService>();
-builder.Services.AddScoped<ICsvContactService, CsvContactService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy =>
@@ -65,6 +65,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.UseMiddleware<RequestLoggingMiddleware>();
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 app.UseCors("Frontend");
 app.UseAuthentication();

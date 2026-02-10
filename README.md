@@ -13,12 +13,15 @@ Contacts ARGE24 is a phone book web application built with:
 - Contacts CRUD
 - Search, filter, sort, pagination
 - Favorites and tags
-- CSV import/export with row-level error report
+- CSV import + Excel export with row-level error report
 - Soft delete + restore endpoint
 - TR/EN language switching with `ngx-translate`
 
 ## Project Structure
 
+- `src/backend/Contacts.Domain` -> Domain entities
+- `src/backend/Contacts.Application` -> DTOs, validators, application contracts
+- `src/backend/Contacts.Infrastructure` -> EF Core, repositories, business services
 - `src/backend/Contacts.Api` -> .NET Web API
 - `src/frontend/contacts-web` -> Angular UI
 - `tests/Contacts.Api.Tests` -> API unit/integration tests
@@ -73,6 +76,7 @@ docker compose up --build
 - `DELETE /api/contacts/{id}` (soft delete)
 - `POST /api/contacts/{id}/restore`
 - `GET /api/contacts/export`
+- `GET /api/contacts/export/excel`
 - `POST /api/contacts/import`
 - `GET /api/tags`
 - `POST /api/tags`

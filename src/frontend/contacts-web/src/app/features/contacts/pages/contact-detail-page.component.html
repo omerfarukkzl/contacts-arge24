@@ -5,6 +5,12 @@
     </section>
   }
 
+  @if (infoMessage(); as infoKey) {
+    <section class="status-banner success">
+      <p>{{ infoKey | translate }}</p>
+    </section>
+  }
+
   @if (loading()) {
     <section class="surface-panel">
       <div class="panel-body">

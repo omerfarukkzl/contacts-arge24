@@ -132,7 +132,9 @@
     "PAGE_CONTEXT_CREATE": "Yeni kayit",
     "PAGE_CONTEXT_EDIT": "Kayit duzenle",
     "SUBTITLE": "Temel bilgileri ve etiketleri tek ekranda yonetin.",
-    "TAGS_HINT": "Etiketleri virgul veya noktali virgulle ayirin"
+    "TAGS_HINT": "Etiketleri virgul veya noktali virgulle ayirin",
+    "CREATE_SUCCESS": "Kisi basariyla olusturuldu.",
+    "UPDATE_SUCCESS": "Kisi basariyla guncellendi."
   },
   "VALIDATION": {
     "REQUIRED_FIRST_NAME": "Ad zorunludur.",
@@ -141,16 +143,16 @@
     "INVALID_EMAIL": "E-posta formati gecersiz."
   },
   "IMPORT_EXPORT": {
-    "TITLE": "CSV Ice Aktar / Disa Aktar",
+    "TITLE": "Excel Disa Aktar / CSV Ice Aktar",
     "PAGE_CONTEXT": "Veri transferi",
     "SUBTITLE": "Filtrelenmis veriyi disa aktarabilir veya toplu kayit ice alabilirsiniz.",
     "EXPORT_TITLE": "Disa Aktar",
     "IMPORT_TITLE": "Ice Aktar",
-    "EXPORT_HELP": "Filtrelere gore CSV olusturup indir.",
+    "EXPORT_HELP": "Filtrelere gore Excel dosyasi olusturup indir.",
     "IMPORT_HELP": "Tek seferde toplu veri yuklemek icin CSV sec.",
-    "DOWNLOAD_CSV": "CSV Indir",
+    "DOWNLOAD_EXCEL": "Excel Indir",
     "UPLOAD_CSV": "CSV Yukle",
-    "EXPORT_SUCCESS": "CSV basariyla olusturuldu ve indirildi.",
+    "EXPORT_SUCCESS": "Excel dosyasi basariyla olusturuldu ve indirildi.",
     "NO_DATA_FOR_EXPORT": "Secilen filtrelere uygun veri bulunamadi.",
     "SELECT_FILE": "CSV dosyasi sec",
     "NO_FILE_SELECTED": "Henuz dosya secilmedi.",

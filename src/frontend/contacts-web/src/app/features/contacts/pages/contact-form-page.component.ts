@@ -62,10 +62,14 @@ export class ContactFormPageComponent {
 
       if (id) {
         const updatedContact = await firstValueFrom(this.contactsApiService.updateContact(id, payload));
-        await this.router.navigate(['/contacts', updatedContact.id]);
+        await this.router.navigate(['/contacts', updatedContact.id], {
+          queryParams: { info: 'updated' }
+        });
       } else {
         const createdContact = await firstValueFrom(this.contactsApiService.createContact(payload));
-        await this.router.navigate(['/contacts', createdContact.id]);
+        await this.router.navigate(['/contacts', createdContact.id], {
+          queryParams: { info: 'created' }
+        });
       }
     } catch (error: unknown) {
       this.errorMessage.set(this.resolveSubmitErrorMessage(error));

@@ -1,6 +1,9 @@
 <Solution>
   <Folder Name="/src/" />
   <Folder Name="/src/backend/">
+    <Project Path="src/backend/Contacts.Domain/Contacts.Domain.csproj" />
+    <Project Path="src/backend/Contacts.Application/Contacts.Application.csproj" />
+    <Project Path="src/backend/Contacts.Infrastructure/Contacts.Infrastructure.csproj" />
     <Project Path="src/backend/Contacts.Api/Contacts.Api.csproj" />
   </Folder>
   <Folder Name="/tests/">

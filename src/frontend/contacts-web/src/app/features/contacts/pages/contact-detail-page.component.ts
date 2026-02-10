@@ -23,6 +23,7 @@ export class ContactDetailPageComponent {
 
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly infoMessage = signal<string | null>(null);
   readonly contact = signal<Contact | null>(null);
 
   constructor() {
@@ -30,6 +31,22 @@ export class ContactDetailPageComponent {
     if (!id) {
       this.errorMessage.set('ERRORS.REQUEST_FAILED');
       return;
+    }
+
+    const info = this.activatedRoute.snapshot.queryParamMap.get('info');
+    if (info === 'created') {
+      this.infoMessage.set('FORM.CREATE_SUCCESS');
+    } else if (info === 'updated') {
+      this.infoMessage.set('FORM.UPDATE_SUCCESS');
+    }
+
+    if (this.infoMessage()) {
+      void this.router.navigate([], {
+        relativeTo: this.activatedRoute,
+        queryParams: { info: null },
+        queryParamsHandling: 'merge',
+        replaceUrl: true
+      });
     }
 
     void this.loadContact(id);

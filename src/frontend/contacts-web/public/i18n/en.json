@@ -132,7 +132,9 @@
     "PAGE_CONTEXT_CREATE": "New record",
     "PAGE_CONTEXT_EDIT": "Edit record",
     "SUBTITLE": "Manage core profile data and tags in one workflow.",
-    "TAGS_HINT": "Separate tags with comma or semicolon"
+    "TAGS_HINT": "Separate tags with comma or semicolon",
+    "CREATE_SUCCESS": "Contact created successfully.",
+    "UPDATE_SUCCESS": "Contact updated successfully."
   },
   "VALIDATION": {
     "REQUIRED_FIRST_NAME": "First name is required.",
@@ -141,16 +143,16 @@
     "INVALID_EMAIL": "Invalid email format."
   },
   "IMPORT_EXPORT": {
-    "TITLE": "CSV Import / Export",
+    "TITLE": "Excel Export / CSV Import",
     "PAGE_CONTEXT": "Data transfer",
     "SUBTITLE": "Export filtered data or import records in batch.",
     "EXPORT_TITLE": "Export",
     "IMPORT_TITLE": "Import",
-    "EXPORT_HELP": "Generate and download CSV based on selected filters.",
+    "EXPORT_HELP": "Generate and download an Excel file based on selected filters.",
     "IMPORT_HELP": "Upload a CSV file to import multiple contacts at once.",
-    "DOWNLOAD_CSV": "Download CSV",
+    "DOWNLOAD_EXCEL": "Download Excel",
     "UPLOAD_CSV": "Upload CSV",
-    "EXPORT_SUCCESS": "CSV was generated and downloaded successfully.",
+    "EXPORT_SUCCESS": "Excel file was generated and downloaded successfully.",
     "NO_DATA_FOR_EXPORT": "No data matched the selected filters.",
     "SELECT_FILE": "Choose CSV file",
     "NO_FILE_SELECTED": "No file selected yet.",

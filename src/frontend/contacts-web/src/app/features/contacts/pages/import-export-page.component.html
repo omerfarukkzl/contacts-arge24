@@ -23,7 +23,7 @@
         <h2>{{ 'IMPORT_EXPORT.EXPORT_TITLE' | translate }}</h2>
         <p>{{ 'IMPORT_EXPORT.EXPORT_HELP' | translate }}</p>
 
-        <form [formGroup]="exportForm" (ngSubmit)="exportCsv()" class="io-form">
+        <form [formGroup]="exportForm" (ngSubmit)="exportExcel()" class="io-form">
           <label>
             <span>{{ 'FILTERS.SEARCH' | translate }}</span>
             <input type="text" formControlName="search" [placeholder]="'FILTERS.SEARCH_PLACEHOLDER' | translate" />
@@ -35,7 +35,7 @@
           </label>
 
           <button type="submit" class="btn btn-primary" [disabled]="loading()">
-            {{ 'IMPORT_EXPORT.DOWNLOAD_CSV' | translate }}
+            {{ 'IMPORT_EXPORT.DOWNLOAD_EXCEL' | translate }}
           </button>
         </form>
       </div>

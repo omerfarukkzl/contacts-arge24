@@ -31,7 +31,7 @@ export class ImportExportPageComponent {
     tag: ['']
   });
 
-  async exportCsv(): Promise<void> {
+  async exportExcel(): Promise<void> {
     this.loading.set(true);
     this.errorMessage.set(null);
     this.infoMessage.set(null);
@@ -40,19 +40,13 @@ export class ImportExportPageComponent {
 
     try {
       const blob = await firstValueFrom(
-        this.contactsApiService.exportContacts({
+        this.contactsApiService.exportContactsExcel({
           search: formValue.search || undefined,
           tag: formValue.tag || undefined
         })
       );
 
-      const hasDataRows = await this.hasCsvDataRows(blob);
-      if (!hasDataRows) {
-        this.infoMessage.set('IMPORT_EXPORT.NO_DATA_FOR_EXPORT');
-        return;
-      }
-
-      this.downloadBlob(blob, `contacts-${new Date().toISOString()}.csv`);
+      this.downloadBlob(blob, `contacts-${new Date().toISOString()}.xls`);
       this.infoMessage.set('IMPORT_EXPORT.EXPORT_SUCCESS');
     } catch {
       this.errorMessage.set('ERRORS.REQUEST_FAILED');
@@ -96,15 +90,5 @@ export class ImportExportPageComponent {
     anchor.click();
 
     URL.revokeObjectURL(url);
-  }
-
-  private async hasCsvDataRows(blob: Blob): Promise<boolean> {
-    const csvText = await blob.text();
-    const nonEmptyLines = csvText
-      .split(/\r?\n/)
-      .map((line) => line.trim())
-      .filter((line) => line.length > 0);
-
-    return nonEmptyLines.length > 1;
   }
 }

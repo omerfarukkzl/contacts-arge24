@@ -1,12 +1,9 @@
-using AutoMapper;
-using Contacts.Api.Data;
-using Contacts.Api.Domain.Entities;
 using Contacts.Api.Dtos.Common;
 using Contacts.Api.Dtos.Contacts;
+using Contacts.Api.Exceptions;
 using Contacts.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Contacts.Api.Controllers;
 
@@ -14,42 +11,24 @@ namespace Contacts.Api.Controllers;
 [Route("api/[controller]")]
 [Authorize]
 public sealed class ContactsController(
-    ContactsDbContext dbContext,
-    ITagService tagService,
-    ICsvContactService csvContactService,
-    ICurrentUserContextAccessor currentUserContextAccessor,
-    IMapper mapper) : ControllerBase
+    IContactApplicationService contactApplicationService,
+    ICurrentUserContextAccessor currentUserContextAccessor) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType(typeof(PagedResult<ContactDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<PagedResult<ContactDto>>> GetContacts([FromQuery] ContactListQuery query, CancellationToken cancellationToken)
+    public async Task<ActionResult<PagedResult<ContactDto>>> GetContacts(
+        [FromQuery] ContactListQuery query,
+        CancellationToken cancellationToken)
     {
-        var currentUser = await currentUserContextAccessor.GetCurrentAsync(cancellationToken);
+        var currentUser = await GetCurrentUserAsync(cancellationToken);
         if (currentUser is null)
         {
             return Unauthorized();
         }
 
-        query.Normalize();
-
-        var filteredQuery = dbContext.Contacts
-            .AsNoTracking()
-            .Where(contact => contact.OwnerUserId == currentUser.AppUserId)
-            .Include(contact => contact.ContactTags)
-            .ThenInclude(contactTag => contactTag.Tag)
-            .ApplyFilters(query);
-
-        var totalCount = await filteredQuery.CountAsync(cancellationToken);
-
-        var contacts = await filteredQuery
-            .ApplySorting(query)
-            .Skip((query.Page - 1) * query.PageSize)
-            .Take(query.PageSize)
-            .ToListAsync(cancellationToken);
-
-        var mapped = mapper.Map<List<ContactDto>>(contacts);
-        return Ok(new PagedResult<ContactDto>(mapped, query.Page, query.PageSize, totalCount));
+        var result = await contactApplicationService.GetContactsAsync(currentUser.AppUserId, query, cancellationToken);
+        return Ok(result);
     }
 
     [HttpGet("{id:guid}")]
@@ -58,46 +37,40 @@ public sealed class ContactsController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ContactDto>> GetContact(Guid id, CancellationToken cancellationToken)
     {
-        var currentUser = await currentUserContextAccessor.GetCurrentAsync(cancellationToken);
+        var currentUser = await GetCurrentUserAsync(cancellationToken);
         if (currentUser is null)
         {
             return Unauthorized();
         }
 
-        var contact = await dbContext.Contacts
-            .AsNoTracking()
-            .Where(entity => entity.OwnerUserId == currentUser.AppUserId)
-            .Include(entity => entity.ContactTags)
-            .ThenInclude(contactTag => contactTag.Tag)
-            .FirstOrDefaultAsync(entity => entity.Id == id, cancellationToken);
-
-        if (contact is null)
-        {
-            return NotFound();
-        }
-
-        return Ok(mapper.Map<ContactDto>(contact));
+        var contact = await contactApplicationService.GetContactAsync(currentUser.AppUserId, id, cancellationToken);
+        return contact is null ? NotFound() : Ok(contact);
     }
 
     [HttpPost]
     [ProducesResponseType(typeof(ContactDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<ContactDto>> CreateContact([FromBody] CreateContactRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<ContactDto>> CreateContact(
+        [FromBody] CreateContactRequest request,
+        CancellationToken cancellationToken)
     {
-        var currentUser = await currentUserContextAccessor.GetCurrentAsync(cancellationToken);
+        var currentUser = await GetCurrentUserAsync(cancellationToken);
         if (currentUser is null)
         {
             return Unauthorized();
         }
 
-        var normalizedPhone = request.Phone.Trim();
-        var duplicatePhoneExists = await dbContext.Contacts
-            .AnyAsync(
-                contact => contact.OwnerUserId == currentUser.AppUserId && contact.Phone == normalizedPhone,
+        try
+        {
+            var contact = await contactApplicationService.CreateContactAsync(
+                currentUser.AppUserId,
+                request,
                 cancellationToken);
 
-        if (duplicatePhoneExists)
+            return CreatedAtAction(nameof(GetContact), new { id = contact.Id }, contact);
+        }
+        catch (DuplicatePhoneException)
         {
             return Conflict(new ProblemDetails
             {
@@ -106,35 +79,6 @@ public sealed class ContactsController(
                 Detail = "A contact with the same phone number already exists."
             });
         }
-
-        var now = DateTime.UtcNow;
-        var contact = new Contact
-        {
-            OwnerUserId = currentUser.AppUserId,
-            FirstName = request.FirstName.Trim(),
-            LastName = request.LastName.Trim(),
-            Phone = normalizedPhone,
-            Email = NullIfWhitespace(request.Email),
-            Company = NullIfWhitespace(request.Company),
-            Notes = NullIfWhitespace(request.Notes),
-            IsFavorite = request.IsFavorite,
-            CreatedAt = now,
-            UpdatedAt = now
-        };
-
-        await tagService.SyncContactTagsAsync(contact, currentUser.AppUserId, request.Tags, cancellationToken);
-
-        dbContext.Contacts.Add(contact);
-        await dbContext.SaveChangesAsync(cancellationToken);
-
-        await dbContext.Entry(contact)
-            .Collection(entity => entity.ContactTags)
-            .Query()
-            .Include(contactTag => contactTag.Tag)
-            .LoadAsync(cancellationToken);
-
-        var mapped = mapper.Map<ContactDto>(contact);
-        return CreatedAtAction(nameof(GetContact), new { id = contact.Id }, mapped);
     }
 
     [HttpPut("{id:guid}")]
@@ -142,32 +86,28 @@ public sealed class ContactsController(
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<ContactDto>> UpdateContact(Guid id, [FromBody] UpdateContactRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<ContactDto>> UpdateContact(
+        Guid id,
+        [FromBody] UpdateContactRequest request,
+        CancellationToken cancellationToken)
     {
-        var currentUser = await currentUserContextAccessor.GetCurrentAsync(cancellationToken);
+        var currentUser = await GetCurrentUserAsync(cancellationToken);
         if (currentUser is null)
         {
             return Unauthorized();
         }
 
-        var contact = await dbContext.Contacts
-            .Where(entity => entity.OwnerUserId == currentUser.AppUserId)
-            .Include(entity => entity.ContactTags)
-            .ThenInclude(contactTag => contactTag.Tag)
-            .FirstOrDefaultAsync(entity => entity.Id == id, cancellationToken);
-
-        if (contact is null)
+        try
         {
-            return NotFound();
-        }
-
-        var normalizedPhone = request.Phone.Trim();
-        var duplicatePhoneExists = await dbContext.Contacts
-            .AnyAsync(
-                entity => entity.OwnerUserId == currentUser.AppUserId && entity.Id != id && entity.Phone == normalizedPhone,
+            var contact = await contactApplicationService.UpdateContactAsync(
+                currentUser.AppUserId,
+                id,
+                request,
                 cancellationToken);
 
-        if (duplicatePhoneExists)
+            return contact is null ? NotFound() : Ok(contact);
+        }
+        catch (DuplicatePhoneException)
         {
             return Conflict(new ProblemDetails
             {
@@ -176,27 +116,6 @@ public sealed class ContactsController(
                 Detail = "A contact with the same phone number already exists."
             });
         }
-
-        contact.FirstName = request.FirstName.Trim();
-        contact.LastName = request.LastName.Trim();
-        contact.Phone = normalizedPhone;
-        contact.Email = NullIfWhitespace(request.Email);
-        contact.Company = NullIfWhitespace(request.Company);
-        contact.Notes = NullIfWhitespace(request.Notes);
-        contact.IsFavorite = request.IsFavorite;
-        contact.UpdatedAt = DateTime.UtcNow;
-
-        await tagService.SyncContactTagsAsync(contact, currentUser.AppUserId, request.Tags, cancellationToken);
-
-        await dbContext.SaveChangesAsync(cancellationToken);
-
-        await dbContext.Entry(contact)
-            .Collection(entity => entity.ContactTags)
-            .Query()
-            .Include(contactTag => contactTag.Tag)
-            .LoadAsync(cancellationToken);
-
-        return Ok(mapper.Map<ContactDto>(contact));
     }
 
     [HttpDelete("{id:guid}")]
@@ -205,27 +124,14 @@ public sealed class ContactsController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteContact(Guid id, CancellationToken cancellationToken)
     {
-        var currentUser = await currentUserContextAccessor.GetCurrentAsync(cancellationToken);
+        var currentUser = await GetCurrentUserAsync(cancellationToken);
         if (currentUser is null)
         {
             return Unauthorized();
         }
 
-        var contact = await dbContext.Contacts
-            .Where(entity => entity.OwnerUserId == currentUser.AppUserId)
-            .FirstOrDefaultAsync(entity => entity.Id == id, cancellationToken);
-
-        if (contact is null)
-        {
-            return NotFound();
-        }
-
-        contact.IsDeleted = true;
-        contact.DeletedAt = DateTime.UtcNow;
-        contact.UpdatedAt = DateTime.UtcNow;
-
-        await dbContext.SaveChangesAsync(cancellationToken);
-        return NoContent();
+        var deleted = await contactApplicationService.DeleteContactAsync(currentUser.AppUserId, id, cancellationToken);
+        return deleted ? NoContent() : NotFound();
     }
 
     [HttpPost("{id:guid}/restore")]
@@ -235,35 +141,20 @@ public sealed class ContactsController(
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<ContactDto>> RestoreContact(Guid id, CancellationToken cancellationToken)
     {
-        var currentUser = await currentUserContextAccessor.GetCurrentAsync(cancellationToken);
+        var currentUser = await GetCurrentUserAsync(cancellationToken);
         if (currentUser is null)
         {
             return Unauthorized();
         }
 
-        var contact = await dbContext.Contacts
-            .IgnoreQueryFilters()
-            .Where(entity => entity.OwnerUserId == currentUser.AppUserId)
-            .Include(entity => entity.ContactTags)
-            .ThenInclude(contactTag => contactTag.Tag)
-            .FirstOrDefaultAsync(entity => entity.Id == id, cancellationToken);
+        var result = await contactApplicationService.RestoreContactAsync(currentUser.AppUserId, id, cancellationToken);
 
-        if (contact is null)
+        if (!result.IsFound)
         {
             return NotFound();
         }
 
-        if (!contact.IsDeleted)
-        {
-            return Ok(mapper.Map<ContactDto>(contact));
-        }
-
-        var duplicatePhoneExists = await dbContext.Contacts
-            .AnyAsync(
-                entity => entity.OwnerUserId == currentUser.AppUserId && entity.Id != id && entity.Phone == contact.Phone,
-                cancellationToken);
-
-        if (duplicatePhoneExists)
+        if (result.HasConflict)
         {
             return Conflict(new ProblemDetails
             {
@@ -273,12 +164,7 @@ public sealed class ContactsController(
             });
         }
 
-        contact.IsDeleted = false;
-        contact.DeletedAt = null;
-        contact.UpdatedAt = DateTime.UtcNow;
-
-        await dbContext.SaveChangesAsync(cancellationToken);
-        return Ok(mapper.Map<ContactDto>(contact));
+        return Ok(result.Contact);
     }
 
     [HttpGet("export")]
@@ -286,16 +172,36 @@ public sealed class ContactsController(
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> ExportContacts([FromQuery] ContactListQuery query, CancellationToken cancellationToken)
     {
-        var currentUser = await currentUserContextAccessor.GetCurrentAsync(cancellationToken);
+        var currentUser = await GetCurrentUserAsync(cancellationToken);
         if (currentUser is null)
         {
             return Unauthorized();
         }
 
-        var csvFile = await csvContactService.ExportAsync(currentUser.AppUserId, query, cancellationToken);
+        var csvFile = await contactApplicationService.ExportCsvAsync(currentUser.AppUserId, query, cancellationToken);
         var fileName = $"contacts-{DateTime.UtcNow:yyyyMMddHHmmss}.csv";
 
         return File(csvFile, "text/csv", fileName);
+    }
+
+    [HttpGet("export/excel")]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> ExportContactsExcel([FromQuery] ContactListQuery query, CancellationToken cancellationToken)
+    {
+        var currentUser = await GetCurrentUserAsync(cancellationToken);
+        if (currentUser is null)
+        {
+            return Unauthorized();
+        }
+
+        var excelFile = await contactApplicationService.ExportExcelAsync(currentUser.AppUserId, query, cancellationToken);
+        var fileName = $"contacts-{DateTime.UtcNow:yyyyMMddHHmmss}.xls";
+
+        return File(
+            excelFile,
+            "application/vnd.ms-excel",
+            fileName);
     }
 
     [HttpPost("import")]
@@ -304,7 +210,7 @@ public sealed class ContactsController(
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<CsvImportResultDto>> ImportContacts([FromForm] IFormFile file, CancellationToken cancellationToken)
     {
-        var currentUser = await currentUserContextAccessor.GetCurrentAsync(cancellationToken);
+        var currentUser = await GetCurrentUserAsync(cancellationToken);
         if (currentUser is null)
         {
             return Unauthorized();
@@ -320,12 +226,17 @@ public sealed class ContactsController(
             });
         }
 
-        var result = await csvContactService.ImportAsync(currentUser.AppUserId, file, cancellationToken);
+        await using var stream = file.OpenReadStream();
+        var result = await contactApplicationService.ImportCsvAsync(
+            currentUser.AppUserId,
+            stream,
+            file.Length,
+            cancellationToken);
         return Ok(result);
     }
 
-    private static string? NullIfWhitespace(string? value)
+    private Task<CurrentUserContext?> GetCurrentUserAsync(CancellationToken cancellationToken)
     {
-        return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+        return currentUserContextAccessor.GetCurrentAsync(cancellationToken);
     }
 }

@@ -46,3 +46,23 @@
   color: var(--ink-700);
   font-size: 0.9rem;
 }
+
+.auth-divider {
+  margin: 0.1rem 0;
+  text-align: center;
+  color: var(--ink-600);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.google-signin-btn {
+  width: 100%;
+}
+
+.google-badge {
+  display: block;
+  width: 1.15rem;
+  height: 1.15rem;
+  flex: 0 0 1.15rem;
+}

@@ -41,14 +41,31 @@ export class LoginPageComponent {
 
     try {
       await this.authService.login(formValue.email, formValue.password);
-      await firstValueFrom(this.authApiService.getMe());
-
-      const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/contacts';
-      await this.router.navigateByUrl(returnUrl);
+      await this.completeSuccessfulLogin();
     } catch (error) {
       this.errorMessage.set(this.authService.mapErrorToTranslationKey(error));
     } finally {
       this.loading.set(false);
     }
+  }
+
+  async submitWithGoogle(): Promise<void> {
+    this.loading.set(true);
+    this.errorMessage.set(null);
+
+    try {
+      await this.authService.loginWithGoogle();
+      await this.completeSuccessfulLogin();
+    } catch (error) {
+      this.errorMessage.set(this.authService.mapErrorToTranslationKey(error));
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  private async completeSuccessfulLogin(): Promise<void> {
+    await firstValueFrom(this.authApiService.getMe());
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/contacts';
+    await this.router.navigateByUrl(returnUrl);
   }
 }

@@ -40,12 +40,30 @@ export class SignupPageComponent {
 
     try {
       await this.authService.signup(formValue.email, formValue.password);
-      await firstValueFrom(this.authApiService.getMe());
-      await this.router.navigateByUrl('/contacts');
+      await this.completeSuccessfulSignup();
     } catch (error) {
       this.errorMessage.set(this.authService.mapErrorToTranslationKey(error));
     } finally {
       this.loading.set(false);
     }
+  }
+
+  async submitWithGoogle(): Promise<void> {
+    this.loading.set(true);
+    this.errorMessage.set(null);
+
+    try {
+      await this.authService.loginWithGoogle();
+      await this.completeSuccessfulSignup();
+    } catch (error) {
+      this.errorMessage.set(this.authService.mapErrorToTranslationKey(error));
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  private async completeSuccessfulSignup(): Promise<void> {
+    await firstValueFrom(this.authApiService.getMe());
+    await this.router.navigateByUrl('/contacts');
   }
 }

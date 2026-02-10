@@ -3,6 +3,7 @@ import { FirebaseError, getApp, getApps, initializeApp } from 'firebase/app';
 import {
   Auth,
   User,
+  GoogleAuthProvider,
   browserLocalPersistence,
   createUserWithEmailAndPassword,
   getAuth,
@@ -10,6 +11,7 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail,
   setPersistence,
+  signInWithPopup,
   signInWithEmailAndPassword,
   signOut
 } from 'firebase/auth';
@@ -86,6 +88,15 @@ export class AuthService {
     this.authUser.set(credentials.user);
   }
 
+  async loginWithGoogle(): Promise<void> {
+    const auth = this.requireAuth();
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    const credentials = await signInWithPopup(auth, provider);
+    this.authUser.set(credentials.user);
+  }
+
   async sendPasswordReset(email: string): Promise<void> {
     const auth = this.requireAuth();
     await sendPasswordResetEmail(auth, email);
@@ -129,6 +140,11 @@ export class AuthService {
         return 'ERRORS.AUTH.USER_DISABLED';
       case 'auth/too-many-requests':
         return 'ERRORS.AUTH.TOO_MANY_ATTEMPTS';
+      case 'auth/popup-closed-by-user':
+      case 'auth/cancelled-popup-request':
+        return 'ERRORS.AUTH.GOOGLE_SIGNIN_CANCELLED';
+      case 'auth/popup-blocked':
+        return 'ERRORS.AUTH.GOOGLE_POPUP_BLOCKED';
       case this.notConfiguredCode:
       case 'auth/operation-not-allowed':
         return 'ERRORS.AUTH.NOT_CONFIGURED';

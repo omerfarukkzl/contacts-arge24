@@ -30,6 +30,18 @@
           </button>
         </form>
 
+        <p class="auth-divider">{{ 'AUTH.OR_CONTINUE_WITH' | translate }}</p>
+
+        <button
+          type="button"
+          class="btn btn-secondary google-signin-btn"
+          (click)="submitWithGoogle()"
+          [disabled]="loading()"
+        >
+          <img class="google-badge" src="/icons/google-logo.svg" alt="" aria-hidden="true" />
+          {{ 'AUTH.GOOGLE_SIGNIN_BUTTON' | translate }}
+        </button>
+
         <div class="auth-links">
           <a routerLink="/auth/login">{{ 'AUTH.HAS_ACCOUNT_LINK' | translate }}</a>
         </div>

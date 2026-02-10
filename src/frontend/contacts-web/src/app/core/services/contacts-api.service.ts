@@ -72,6 +72,23 @@ export class ContactsApiService {
     });
   }
 
+  exportContactsExcel(query: Pick<ContactListQuery, 'search' | 'tag'>): Observable<Blob> {
+    let params = new HttpParams();
+
+    if (query.search) {
+      params = params.set('search', query.search);
+    }
+
+    if (query.tag) {
+      params = params.set('tag', query.tag);
+    }
+
+    return this.http.get(`${this.baseUrl}/export/excel`, {
+      params,
+      responseType: 'blob'
+    });
+  }
+
   importContacts(file: File): Observable<CsvImportResult> {
     const formData = new FormData();
     formData.append('file', file);

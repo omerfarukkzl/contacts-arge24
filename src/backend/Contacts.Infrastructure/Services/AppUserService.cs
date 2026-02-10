@@ -1,10 +1,11 @@
-using Contacts.Api.Data;
 using Contacts.Api.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+using Contacts.Api.Repositories;
 
 namespace Contacts.Api.Services;
 
-public sealed class AppUserService(ContactsDbContext dbContext) : IAppUserService
+public sealed class AppUserService(
+    IAppUserRepository appUserRepository,
+    IUnitOfWork unitOfWork) : IAppUserService
 {
     public async Task<AppUser> GetOrCreateByFirebaseUidAsync(
         string firebaseUid,
@@ -22,8 +23,7 @@ public sealed class AppUserService(ContactsDbContext dbContext) : IAppUserServic
         var normalizedDisplayName = NullIfWhitespace(displayName);
         var now = DateTime.UtcNow;
 
-        var appUser = await dbContext.AppUsers
-            .FirstOrDefaultAsync(user => user.FirebaseUid == normalizedUid, cancellationToken);
+        var appUser = await appUserRepository.GetByFirebaseUidAsync(normalizedUid, cancellationToken);
 
         if (appUser is null)
         {
@@ -36,8 +36,8 @@ public sealed class AppUserService(ContactsDbContext dbContext) : IAppUserServic
                 LastSeenAtUtc = now
             };
 
-            dbContext.AppUsers.Add(appUser);
-            await dbContext.SaveChangesAsync(cancellationToken);
+            await appUserRepository.AddAsync(appUser, cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
             return appUser;
         }
 
@@ -63,7 +63,8 @@ public sealed class AppUserService(ContactsDbContext dbContext) : IAppUserServic
 
         if (shouldPersist)
         {
-            await dbContext.SaveChangesAsync(cancellationToken);
+            appUserRepository.Update(appUser);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
         return appUser;

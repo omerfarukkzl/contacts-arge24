@@ -109,4 +109,27 @@ public sealed class ContactsControllerIntegrationTests : IClassFixture<ContactsA
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
+
+    [Fact]
+    public async Task Should_Export_Contacts_As_Excel()
+    {
+        var createRequest = new CreateContactRequest
+        {
+            FirstName = "Export",
+            LastName = "User",
+            Phone = "+905551112299"
+        };
+
+        var createResponse = await client.PostAsJsonAsync("/api/contacts", createRequest);
+        Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+
+        var response = await client.GetAsync("/api/contacts/export/excel");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(
+            "application/vnd.ms-excel",
+            response.Content.Headers.ContentType?.MediaType);
+
+        var fileBytes = await response.Content.ReadAsByteArrayAsync();
+        Assert.True(fileBytes.Length > 0);
+    }
 }

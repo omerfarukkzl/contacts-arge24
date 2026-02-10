@@ -1,33 +1,28 @@
 using System.Globalization;
 using System.Text;
-using Contacts.Api.Data;
 using Contacts.Api.Domain.Entities;
 using Contacts.Api.Dtos.Contacts;
+using Contacts.Api.Repositories;
 using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.Configuration.Attributes;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Contacts.Api.Services;
 
 public sealed class CsvContactService(
-    ContactsDbContext dbContext,
+    IContactRepository contactRepository,
+    IUnitOfWork unitOfWork,
     IValidator<CreateContactRequest> createValidator,
-    ITagService tagService) : ICsvContactService
+    ITagService tagService,
+    ILogger<CsvContactService> logger) : ICsvContactService
 {
-    public async Task<byte[]> ExportAsync(Guid ownerUserId, ContactListQuery query, CancellationToken cancellationToken)
+    public async Task<byte[]> ExportCsvAsync(Guid ownerUserId, ContactListQuery query, CancellationToken cancellationToken)
     {
         query.Normalize();
 
-        var contacts = await dbContext.Contacts
-            .AsNoTracking()
-            .Where(contact => contact.OwnerUserId == ownerUserId)
-            .Include(contact => contact.ContactTags)
-            .ThenInclude(contactTag => contactTag.Tag)
-            .ApplyFilters(query)
-            .ApplySorting(query)
-            .ToListAsync(cancellationToken);
+        var contacts = await contactRepository.GetForExportAsync(ownerUserId, query, cancellationToken);
 
         using var writer = new StringWriter(CultureInfo.InvariantCulture);
         using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
@@ -56,17 +51,29 @@ public sealed class CsvContactService(
         }
 
         await writer.FlushAsync();
+        logger.LogInformation("Exported {ContactCount} contacts to CSV for owner {OwnerUserId}", contacts.Count, ownerUserId);
         return Encoding.UTF8.GetBytes(writer.ToString());
+    }
+
+    public async Task<byte[]> ExportExcelAsync(Guid ownerUserId, ContactListQuery query, CancellationToken cancellationToken)
+    {
+        query.Normalize();
+
+        var contacts = await contactRepository.GetForExportAsync(ownerUserId, query, cancellationToken);
+        var workbookXml = BuildSpreadsheetXml(contacts);
+        logger.LogInformation("Exported {ContactCount} contacts to Excel for owner {OwnerUserId}", contacts.Count, ownerUserId);
+        return Encoding.UTF8.GetBytes(workbookXml);
     }
 
     public async Task<CsvImportResultDto> ImportAsync(
         Guid ownerUserId,
-        IFormFile file,
+        Stream stream,
+        long fileLength,
         CancellationToken cancellationToken)
     {
         var result = new CsvImportResultDto();
 
-        if (file.Length == 0)
+        if (fileLength == 0)
         {
             result.Errors.Add(new CsvRowErrorDto
             {
@@ -78,7 +85,6 @@ public sealed class CsvContactService(
             return result;
         }
 
-        await using var stream = file.OpenReadStream();
         using var reader = new StreamReader(stream);
 
         var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -181,11 +187,11 @@ public sealed class CsvContactService(
                 continue;
             }
 
-            var duplicatePhoneExists = await dbContext.Contacts
-                .AsNoTracking()
-                .AnyAsync(
-                    contact => contact.OwnerUserId == ownerUserId && contact.Phone == request.Phone,
-                    cancellationToken);
+            var duplicatePhoneExists = await contactRepository.ExistsByPhoneAsync(
+                ownerUserId,
+                request.Phone,
+                excludedContactId: null,
+                cancellationToken);
 
             if (duplicatePhoneExists)
             {
@@ -215,8 +221,8 @@ public sealed class CsvContactService(
 
             await tagService.SyncContactTagsAsync(contact, ownerUserId, request.Tags, cancellationToken);
 
-            dbContext.Contacts.Add(contact);
-            await dbContext.SaveChangesAsync(cancellationToken);
+            await contactRepository.AddAsync(contact, cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
             result.ImportedCount++;
         }
 
@@ -224,6 +230,12 @@ public sealed class CsvContactService(
             .Select(error => error.RowNumber)
             .Distinct()
             .Count();
+
+        logger.LogInformation(
+            "CSV import completed for owner {OwnerUserId}: imported={ImportedCount}, failed={FailedCount}",
+            ownerUserId,
+            result.ImportedCount,
+            result.FailedCount);
 
         return result;
     }
@@ -289,6 +301,63 @@ public sealed class CsvContactService(
             nameof(CreateContactRequest.Tags) => row.Tags,
             _ => null
         };
+    }
+
+    private static string BuildSpreadsheetXml(IReadOnlyCollection<Contact> contacts)
+    {
+        var builder = new StringBuilder();
+        builder.AppendLine("<?xml version=\"1.0\"?>");
+        builder.AppendLine("<?mso-application progid=\"Excel.Sheet\"?>");
+        builder.AppendLine("<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\">");
+        builder.AppendLine("  <Worksheet ss:Name=\"Contacts\">");
+        builder.AppendLine("    <Table>");
+
+        WriteSpreadsheetRow(builder, ["FirstName", "LastName", "Phone", "Email", "Company", "Notes", "IsFavorite", "Tags"]);
+
+        foreach (var contact in contacts)
+        {
+            WriteSpreadsheetRow(
+                builder,
+                [
+                    contact.FirstName,
+                    contact.LastName,
+                    contact.Phone,
+                    contact.Email ?? string.Empty,
+                    contact.Company ?? string.Empty,
+                    contact.Notes ?? string.Empty,
+                    contact.IsFavorite ? "true" : "false",
+                    string.Join(';', contact.ContactTags.Select(contactTag => contactTag.Tag.Name))
+                ]);
+        }
+
+        builder.AppendLine("    </Table>");
+        builder.AppendLine("  </Worksheet>");
+        builder.AppendLine("</Workbook>");
+
+        return builder.ToString();
+    }
+
+    private static void WriteSpreadsheetRow(StringBuilder builder, IReadOnlyList<string> values)
+    {
+        builder.AppendLine("      <Row>");
+        foreach (var value in values)
+        {
+            builder.Append("        <Cell><Data ss:Type=\"String\">");
+            builder.Append(EscapeXml(value));
+            builder.AppendLine("</Data></Cell>");
+        }
+
+        builder.AppendLine("      </Row>");
+    }
+
+    private static string EscapeXml(string value)
+    {
+        return value
+            .Replace("&", "&amp;", StringComparison.Ordinal)
+            .Replace("<", "&lt;", StringComparison.Ordinal)
+            .Replace(">", "&gt;", StringComparison.Ordinal)
+            .Replace("\"", "&quot;", StringComparison.Ordinal)
+            .Replace("'", "&apos;", StringComparison.Ordinal);
     }
 
     private sealed class CsvContactRow

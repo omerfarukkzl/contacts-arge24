@@ -1,10 +1,13 @@
-using Contacts.Api.Data;
 using Contacts.Api.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+using Contacts.Api.Repositories;
+using Microsoft.Extensions.Logging;
 
 namespace Contacts.Api.Services;
 
-public sealed class TagService(ContactsDbContext dbContext) : ITagService
+public sealed class TagService(
+    ITagRepository tagRepository,
+    IUnitOfWork unitOfWork,
+    ILogger<TagService> logger) : ITagService
 {
     public async Task SyncContactTagsAsync(
         Contact contact,
@@ -50,13 +53,7 @@ public sealed class TagService(ContactsDbContext dbContext) : ITagService
             return [];
         }
 
-        var normalizedLower = normalizedTagNames
-            .Select(tagName => tagName.ToLowerInvariant())
-            .ToList();
-
-        var existingTags = await dbContext.Tags
-            .Where(tag => tag.OwnerUserId == ownerUserId && normalizedLower.Contains(tag.Name.ToLower()))
-            .ToListAsync(cancellationToken);
+        var existingTags = await tagRepository.GetByOwnerAndNamesAsync(ownerUserId, normalizedTagNames, cancellationToken);
 
         var existingNames = existingTags
             .Select(tag => tag.Name)
@@ -73,9 +70,10 @@ public sealed class TagService(ContactsDbContext dbContext) : ITagService
 
         if (newTags.Count > 0)
         {
-            await dbContext.Tags.AddRangeAsync(newTags, cancellationToken);
-            await dbContext.SaveChangesAsync(cancellationToken);
+            await tagRepository.AddRangeAsync(newTags, cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
             existingTags.AddRange(newTags);
+            logger.LogInformation("Created {TagCount} new tags for owner {OwnerUserId}", newTags.Count, ownerUserId);
         }
 
         return existingTags;

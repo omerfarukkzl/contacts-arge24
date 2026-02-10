@@ -8,6 +8,8 @@ Contacts ARGE24 is a phone book web application built with:
 
 ## Features
 
+- Authentication (Firebase email/password + password reset)
+- User-isolated contacts and tags (per-account data scope)
 - Contacts CRUD
 - Search, filter, sort, pagination
 - Favorites and tags
@@ -40,6 +42,10 @@ docker compose up -d sqlserver
 ```bash
 DOTNET_CLI_HOME=/tmp/dotnet dotnet run --project src/backend/Contacts.Api
 ```
+
+Before running, set Firebase config in:
+- `src/backend/Contacts.Api/appsettings.json` (`Authentication:Firebase:ProjectId`)
+- `src/frontend/contacts-web/src/environments/environment.ts` (`firebase.apiKey`, `firebase.projectId`)
 
 3. Run Web:
 

@@ -48,6 +48,15 @@
     </nav>
 
     <div class="rail-controls">
+      <div class="session-controls">
+        @if (userEmail(); as email) {
+          <p>{{ email }}</p>
+        }
+        <button type="button" class="btn btn-secondary" (click)="logout()">
+          {{ 'AUTH.LOGOUT' | translate }}
+        </button>
+      </div>
+
       <div class="theme-switcher" role="group" [attr.aria-label]="'A11Y.THEME_SWITCH' | translate">
         <button
           type="button"

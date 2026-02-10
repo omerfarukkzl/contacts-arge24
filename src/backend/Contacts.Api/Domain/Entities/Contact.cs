@@ -3,6 +3,7 @@ namespace Contacts.Api.Domain.Entities;
 public sealed class Contact
 {
     public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid OwnerUserId { get; set; }
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
@@ -14,5 +15,6 @@ public sealed class Contact
     public DateTime? UpdatedAt { get; set; }
     public bool IsDeleted { get; set; }
     public DateTime? DeletedAt { get; set; }
+    public AppUser OwnerUser { get; set; } = null!;
     public ICollection<ContactTag> ContactTags { get; set; } = new List<ContactTag>();
 }

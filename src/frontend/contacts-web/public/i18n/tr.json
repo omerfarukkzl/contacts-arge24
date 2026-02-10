@@ -37,6 +37,38 @@
     "PREV": "Onceki",
     "LOADING": "Yukleniyor..."
   },
+  "LANDING": {
+    "EYEBROW": "Ozel alan",
+    "TITLE": "Rehberinizi hesap bazli gizlilikle yonetin",
+    "SUBTITLE": "Kendi kisi kasaniza, etiketlerinize ve CSV araclarina erismek icin giris yapin.",
+    "CTA_SIGN_UP": "Hesap olustur",
+    "CTA_LOGIN": "Giris yap",
+    "FEATURE_PRIVATE_CONTACTS": "Her hesap sadece kendi kisi ve etiketlerini gorur.",
+    "FEATURE_FILTERS": "Hizli arama, siralama, favoriler ve etiket filtreleri.",
+    "FEATURE_IMPORT_EXPORT": "CSV ile toplu ice/disa aktarim akislari."
+  },
+  "AUTH": {
+    "EMAIL": "E-posta",
+    "PASSWORD": "Sifre",
+    "LOGIN_CONTEXT": "Giris",
+    "LOGIN_TITLE": "Tekrar hos geldiniz",
+    "LOGIN_SUBTITLE": "Kisi calisma alaniniza erismek icin hesabiniza girin.",
+    "LOGIN_BUTTON": "Giris yap",
+    "FORGOT_PASSWORD_LINK": "Sifrenizi mi unuttunuz?",
+    "NO_ACCOUNT_LINK": "Hesabiniz yok mu? Kayit olun",
+    "SIGNUP_CONTEXT": "Kayit",
+    "SIGNUP_TITLE": "Ozel calisma alaninizi baslatin",
+    "SIGNUP_SUBTITLE": "Hesabinizi olusturun ve kendi kisi verinizle devam edin.",
+    "SIGNUP_BUTTON": "Kayit ol",
+    "HAS_ACCOUNT_LINK": "Zaten hesabin var mi? Giris yap",
+    "RESET_CONTEXT": "Sifre sifirlama",
+    "RESET_TITLE": "Sifrenizi sifirlayin",
+    "RESET_SUBTITLE": "Sifre yenileme baglantisi icin e-posta adresinizi girin.",
+    "RESET_BUTTON": "Sifirlama e-postasi gonder",
+    "RESET_SENT": "Sifre sifirlama e-postasi gonderildi.",
+    "BACK_TO_LOGIN": "Girise don",
+    "LOGOUT": "Cikis yap"
+  },
   "CONTACTS": {
     "TITLE": "Kisiler",
     "SUBTITLE": "Rehberinizi arayin ve yonetin.",
@@ -111,6 +143,13 @@
   },
   "ERRORS": {
     "DUPLICATE_PHONE": "Bu telefon numarasi zaten baska bir kiside kayitli.",
-    "REQUEST_FAILED": "Islem basarisiz oldu. Tekrar deneyin."
+    "REQUEST_FAILED": "Islem basarisiz oldu. Tekrar deneyin.",
+    "AUTH": {
+      "EMAIL_EXISTS": "Bu e-posta zaten kullaniliyor.",
+      "INVALID_CREDENTIALS": "E-posta veya sifre gecersiz.",
+      "USER_DISABLED": "Bu hesap devre disi.",
+      "TOO_MANY_ATTEMPTS": "Cok fazla deneme yapildi. Lutfen daha sonra tekrar deneyin.",
+      "NOT_CONFIGURED": "Kimlik dogrulama henuz yapilandirilmadi."
+    }
   }
 }

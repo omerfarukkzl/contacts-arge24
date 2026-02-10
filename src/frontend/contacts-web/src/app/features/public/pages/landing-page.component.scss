@@ -1,0 +1,32 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.landing-shell {
+  min-height: 100dvh;
+  display: grid;
+  align-items: center;
+  padding: clamp(1rem, 4vw, 2.8rem);
+}
+
+.landing-content {
+  width: min(860px, 100%);
+  margin-inline: auto;
+}
+
+.feature-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.feature-list li {
+  padding: 0.64rem 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--line-soft);
+  background: rgba(255, 255, 255, 0.45);
+  color: var(--ink-800);
+}

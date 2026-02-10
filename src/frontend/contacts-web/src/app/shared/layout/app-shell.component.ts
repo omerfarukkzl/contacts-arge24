@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService, SupportedLanguage } from '../../core/services/language.service';
 import { ThemeService } from '../../core/services/theme.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-app-shell',
@@ -15,9 +16,12 @@ import { ThemeService } from '../../core/services/theme.service';
 export class AppShellComponent {
   private readonly languageService = inject(LanguageService);
   private readonly themeService = inject(ThemeService);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   readonly currentLanguage = this.languageService.currentLanguage;
   readonly currentTheme = this.themeService.currentTheme;
+  readonly userEmail = this.authService.userEmail;
   readonly supportedLanguages: SupportedLanguage[] = ['tr', 'en'];
   readonly mobileNavOpen = signal(false);
 
@@ -35,5 +39,11 @@ export class AppShellComponent {
 
   closeMobileNav(): void {
     this.mobileNavOpen.set(false);
+  }
+
+  async logout(): Promise<void> {
+    await this.authService.logout();
+    this.closeMobileNav();
+    await this.router.navigate(['/auth/login']);
   }
 }

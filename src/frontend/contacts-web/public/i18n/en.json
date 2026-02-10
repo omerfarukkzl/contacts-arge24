@@ -37,6 +37,38 @@
     "PREV": "Previous",
     "LOADING": "Loading..."
   },
+  "LANDING": {
+    "EYEBROW": "Private workspace",
+    "TITLE": "Manage your contacts with account-level privacy",
+    "SUBTITLE": "Sign in to access your own contact vault, tags, and import/export tools.",
+    "CTA_SIGN_UP": "Create account",
+    "CTA_LOGIN": "Log in",
+    "FEATURE_PRIVATE_CONTACTS": "Each account sees only its own contacts and tags.",
+    "FEATURE_FILTERS": "Fast search, sort, favorites, and tag-based filtering.",
+    "FEATURE_IMPORT_EXPORT": "Bulk import and export through CSV workflows."
+  },
+  "AUTH": {
+    "EMAIL": "Email",
+    "PASSWORD": "Password",
+    "LOGIN_CONTEXT": "Sign in",
+    "LOGIN_TITLE": "Welcome back",
+    "LOGIN_SUBTITLE": "Continue with your account to access your contact workspace.",
+    "LOGIN_BUTTON": "Log in",
+    "FORGOT_PASSWORD_LINK": "Forgot your password?",
+    "NO_ACCOUNT_LINK": "Do not have an account? Sign up",
+    "SIGNUP_CONTEXT": "Create account",
+    "SIGNUP_TITLE": "Start your private workspace",
+    "SIGNUP_SUBTITLE": "Create your account and continue with your own contact data.",
+    "SIGNUP_BUTTON": "Sign up",
+    "HAS_ACCOUNT_LINK": "Already have an account? Log in",
+    "RESET_CONTEXT": "Password reset",
+    "RESET_TITLE": "Reset your password",
+    "RESET_SUBTITLE": "Enter your email to receive a password reset link.",
+    "RESET_BUTTON": "Send reset email",
+    "RESET_SENT": "Password reset email sent.",
+    "BACK_TO_LOGIN": "Back to login",
+    "LOGOUT": "Log out"
+  },
   "CONTACTS": {
     "TITLE": "Contacts",
     "SUBTITLE": "Search and manage your phone book.",
@@ -111,6 +143,13 @@
   },
   "ERRORS": {
     "DUPLICATE_PHONE": "This phone number is already used by another contact.",
-    "REQUEST_FAILED": "Request failed. Please try again."
+    "REQUEST_FAILED": "Request failed. Please try again.",
+    "AUTH": {
+      "EMAIL_EXISTS": "This email is already in use.",
+      "INVALID_CREDENTIALS": "Email or password is invalid.",
+      "USER_DISABLED": "This account is disabled.",
+      "TOO_MANY_ATTEMPTS": "Too many attempts. Please try again later.",
+      "NOT_CONFIGURED": "Authentication is not configured yet."
+    }
   }
 }

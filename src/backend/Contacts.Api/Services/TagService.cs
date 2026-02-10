@@ -6,10 +6,14 @@ namespace Contacts.Api.Services;
 
 public sealed class TagService(ContactsDbContext dbContext) : ITagService
 {
-    public async Task SyncContactTagsAsync(Contact contact, IEnumerable<string>? rawTagNames, CancellationToken cancellationToken)
+    public async Task SyncContactTagsAsync(
+        Contact contact,
+        Guid ownerUserId,
+        IEnumerable<string>? rawTagNames,
+        CancellationToken cancellationToken)
     {
         var normalizedTagNames = NormalizeTagNames(rawTagNames);
-        var tags = await ResolveTagsAsync(normalizedTagNames, cancellationToken);
+        var tags = await ResolveTagsAsync(ownerUserId, normalizedTagNames, cancellationToken);
         var requestedTagIds = tags.Select(tag => tag.Id).ToHashSet();
 
         var relationsToDelete = contact.ContactTags
@@ -36,7 +40,10 @@ public sealed class TagService(ContactsDbContext dbContext) : ITagService
         }
     }
 
-    private async Task<List<Tag>> ResolveTagsAsync(IReadOnlyCollection<string> normalizedTagNames, CancellationToken cancellationToken)
+    private async Task<List<Tag>> ResolveTagsAsync(
+        Guid ownerUserId,
+        IReadOnlyCollection<string> normalizedTagNames,
+        CancellationToken cancellationToken)
     {
         if (normalizedTagNames.Count == 0)
         {
@@ -48,7 +55,7 @@ public sealed class TagService(ContactsDbContext dbContext) : ITagService
             .ToList();
 
         var existingTags = await dbContext.Tags
-            .Where(tag => normalizedLower.Contains(tag.Name.ToLower()))
+            .Where(tag => tag.OwnerUserId == ownerUserId && normalizedLower.Contains(tag.Name.ToLower()))
             .ToListAsync(cancellationToken);
 
         var existingNames = existingTags
@@ -57,7 +64,11 @@ public sealed class TagService(ContactsDbContext dbContext) : ITagService
 
         var newTags = normalizedTagNames
             .Where(tagName => !existingNames.Contains(tagName))
-            .Select(tagName => new Tag { Name = tagName })
+            .Select(tagName => new Tag
+            {
+                Name = tagName,
+                OwnerUserId = ownerUserId
+            })
             .ToList();
 
         if (newTags.Count > 0)

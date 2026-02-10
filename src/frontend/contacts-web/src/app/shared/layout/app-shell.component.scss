@@ -143,6 +143,18 @@
   padding-top: 0.35rem;
 }
 
+.session-controls {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.session-controls p {
+  margin: 0;
+  color: var(--ink-600);
+  font-size: 0.8rem;
+  word-break: break-word;
+}
+
 .theme-switcher,
 .language-switcher {
   display: flex;

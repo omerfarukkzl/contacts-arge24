@@ -16,12 +16,13 @@ public sealed class CsvContactService(
     IValidator<CreateContactRequest> createValidator,
     ITagService tagService) : ICsvContactService
 {
-    public async Task<byte[]> ExportAsync(ContactListQuery query, CancellationToken cancellationToken)
+    public async Task<byte[]> ExportAsync(Guid ownerUserId, ContactListQuery query, CancellationToken cancellationToken)
     {
         query.Normalize();
 
         var contacts = await dbContext.Contacts
             .AsNoTracking()
+            .Where(contact => contact.OwnerUserId == ownerUserId)
             .Include(contact => contact.ContactTags)
             .ThenInclude(contactTag => contactTag.Tag)
             .ApplyFilters(query)
@@ -58,7 +59,10 @@ public sealed class CsvContactService(
         return Encoding.UTF8.GetBytes(writer.ToString());
     }
 
-    public async Task<CsvImportResultDto> ImportAsync(IFormFile file, CancellationToken cancellationToken)
+    public async Task<CsvImportResultDto> ImportAsync(
+        Guid ownerUserId,
+        IFormFile file,
+        CancellationToken cancellationToken)
     {
         var result = new CsvImportResultDto();
 
@@ -118,12 +122,12 @@ public sealed class CsvContactService(
 
         while (await csv.ReadAsync())
         {
-            var rowNumber = csv.Context.Parser.Row;
+            var rowNumber = csv.Context.Parser?.Row ?? 0;
 
-            CsvContactRow? row;
+            CsvContactRow row;
             try
             {
-                row = csv.GetRecord<CsvContactRow>();
+                row = csv.GetRecord<CsvContactRow>() ?? new CsvContactRow();
             }
             catch (Exception exception)
             {
@@ -179,7 +183,9 @@ public sealed class CsvContactService(
 
             var duplicatePhoneExists = await dbContext.Contacts
                 .AsNoTracking()
-                .AnyAsync(contact => contact.Phone == request.Phone, cancellationToken);
+                .AnyAsync(
+                    contact => contact.OwnerUserId == ownerUserId && contact.Phone == request.Phone,
+                    cancellationToken);
 
             if (duplicatePhoneExists)
             {
@@ -195,6 +201,7 @@ public sealed class CsvContactService(
 
             var contact = new Contact
             {
+                OwnerUserId = ownerUserId,
                 FirstName = request.FirstName.Trim(),
                 LastName = request.LastName.Trim(),
                 Phone = request.Phone.Trim(),
@@ -206,7 +213,7 @@ public sealed class CsvContactService(
                 UpdatedAt = DateTime.UtcNow
             };
 
-            await tagService.SyncContactTagsAsync(contact, request.Tags, cancellationToken);
+            await tagService.SyncContactTagsAsync(contact, ownerUserId, request.Tags, cancellationToken);
 
             dbContext.Contacts.Add(contact);
             await dbContext.SaveChangesAsync(cancellationToken);

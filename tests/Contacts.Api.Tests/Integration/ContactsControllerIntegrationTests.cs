@@ -1,5 +1,7 @@
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using Contacts.Api.Dtos.Auth;
 using Contacts.Api.Dtos.Contacts;
 
 namespace Contacts.Api.Tests.Integration;
@@ -7,10 +9,23 @@ namespace Contacts.Api.Tests.Integration;
 public sealed class ContactsControllerIntegrationTests : IClassFixture<ContactsApiFactory>
 {
     private readonly HttpClient client;
+    private readonly ContactsApiFactory factory;
 
     public ContactsControllerIntegrationTests(ContactsApiFactory factory)
     {
+        this.factory = factory;
         client = factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(TestAuthHandler.SchemeName, "user-a");
+    }
+
+    [Fact]
+    public async Task Should_Return_Unauthorized_Without_Authentication()
+    {
+        using var anonymousClient = factory.CreateClient();
+
+        var response = await anonymousClient.GetAsync("/api/contacts");
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
@@ -42,6 +57,41 @@ public sealed class ContactsControllerIntegrationTests : IClassFixture<ContactsA
         Assert.NotNull(fetchedContact);
         Assert.Equal(createRequest.Phone, fetchedContact.Phone);
         Assert.Equal(2, fetchedContact.Tags.Count);
+    }
+
+    [Fact]
+    public async Task Should_Hide_Another_Users_Contact_With_NotFound()
+    {
+        var createRequest = new CreateContactRequest
+        {
+            FirstName = "Ayse",
+            LastName = "Yildiz",
+            Phone = "+905551112290"
+        };
+
+        var createResponse = await client.PostAsJsonAsync("/api/contacts", createRequest);
+        var createdContact = await createResponse.Content.ReadFromJsonAsync<ContactDto>();
+        Assert.NotNull(createdContact);
+
+        using var secondUserClient = factory.CreateClient();
+        secondUserClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(TestAuthHandler.SchemeName, "user-b");
+
+        var secondUserResponse = await secondUserClient.GetAsync($"/api/contacts/{createdContact.Id}");
+
+        Assert.Equal(HttpStatusCode.NotFound, secondUserResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task Should_Provision_User_On_Auth_Me()
+    {
+        var response = await client.GetAsync("/api/auth/me");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var me = await response.Content.ReadFromJsonAsync<AuthMeDto>();
+        Assert.NotNull(me);
+        Assert.NotEqual(Guid.Empty, me.Id);
+        Assert.Equal("user-a", me.FirebaseUid);
     }
 
     [Fact]

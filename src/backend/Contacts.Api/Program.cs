@@ -4,9 +4,23 @@ using Contacts.Api.Services;
 using Contacts.Api.Validation;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
+var firebaseProjectId = builder.Configuration["Authentication:Firebase:ProjectId"];
+var firebaseIssuer = builder.Configuration["Authentication:Firebase:Issuer"];
+
+if (string.IsNullOrWhiteSpace(firebaseProjectId))
+{
+    firebaseProjectId = "replace-with-firebase-project-id";
+}
+
+if (string.IsNullOrWhiteSpace(firebaseIssuer))
+{
+    firebaseIssuer = $"https://securetoken.google.com/{firebaseProjectId}";
+}
 
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
@@ -15,6 +29,27 @@ builder.Services.AddDbContext<ContactsDbContext>(options =>
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateContactRequestValidator>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.MapInboundClaims = false;
+        options.Authority = $"https://securetoken.google.com/{firebaseProjectId}";
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = firebaseIssuer,
+            ValidateAudience = true,
+            ValidAudience = firebaseProjectId,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            NameClaimType = "name",
+            RoleClaimType = "role"
+        };
+    });
+builder.Services.AddAuthorization();
+builder.Services.AddScoped<IAppUserService, AppUserService>();
+builder.Services.AddScoped<ICurrentUserContextAccessor, CurrentUserContextAccessor>();
 builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<ICsvContactService, CsvContactService>();
 builder.Services.AddCors(options =>
@@ -32,6 +67,7 @@ var app = builder.Build();
 
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 app.UseCors("Frontend");
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapGet("/", () => "Contacts API is running!");

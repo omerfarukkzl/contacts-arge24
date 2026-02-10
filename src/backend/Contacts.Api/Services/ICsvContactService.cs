@@ -4,6 +4,6 @@ namespace Contacts.Api.Services;
 
 public interface ICsvContactService
 {
-    Task<byte[]> ExportAsync(ContactListQuery query, CancellationToken cancellationToken);
-    Task<CsvImportResultDto> ImportAsync(IFormFile file, CancellationToken cancellationToken);
+    Task<byte[]> ExportAsync(Guid ownerUserId, ContactListQuery query, CancellationToken cancellationToken);
+    Task<CsvImportResultDto> ImportAsync(Guid ownerUserId, IFormFile file, CancellationToken cancellationToken);
 }

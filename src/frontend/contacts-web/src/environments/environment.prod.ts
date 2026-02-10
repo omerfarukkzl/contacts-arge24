@@ -1,4 +1,10 @@
 export const environment = {
     production: true,
-    apiUrl: 'https://contacts-api-q3i6.onrender.com/api'
+    apiUrl: 'https://contacts-api-q3i6.onrender.com/api',
+    firebase: {
+        apiKey: 'AIzaSyClSOCIU_2UIXPb6i-Y86XxZm3GL89f5G4',
+        projectId: 'contacts-arge24',
+        authDomain: 'contacts-arge24.firebaseapp.com',
+        appId: '1:469825614130:web:06831c0e9c7e4554bf672b'
+    }
 };

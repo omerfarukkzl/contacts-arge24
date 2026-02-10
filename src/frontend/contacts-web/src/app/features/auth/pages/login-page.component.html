@@ -1,0 +1,52 @@
+<section class="auth-shell fade-slide-in">
+  <section class="page-stack auth-stack">
+    <header class="page-hero">
+      <span class="page-eyebrow">{{ 'AUTH.LOGIN_CONTEXT' | translate }}</span>
+      <h1>{{ 'AUTH.LOGIN_TITLE' | translate }}</h1>
+      <p>{{ 'AUTH.LOGIN_SUBTITLE' | translate }}</p>
+    </header>
+
+    <section class="surface-panel">
+      <div class="panel-body auth-panel-body">
+        @if (errorMessage(); as errorKey) {
+          <section class="status-banner error">
+            <p>{{ errorKey | translate }}</p>
+          </section>
+        }
+
+        <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="submit()">
+          <label>
+            <span>{{ 'AUTH.EMAIL' | translate }}</span>
+            <input type="email" formControlName="email" autocomplete="email" />
+          </label>
+
+          <label>
+            <span>{{ 'AUTH.PASSWORD' | translate }}</span>
+            <input type="password" formControlName="password" autocomplete="current-password" />
+          </label>
+
+          <button type="submit" class="btn btn-primary" [disabled]="loading()">
+            {{ 'AUTH.LOGIN_BUTTON' | translate }}
+          </button>
+        </form>
+
+        <p class="auth-divider">{{ 'AUTH.OR_CONTINUE_WITH' | translate }}</p>
+
+        <button
+          type="button"
+          class="btn btn-secondary google-signin-btn"
+          (click)="submitWithGoogle()"
+          [disabled]="loading()"
+        >
+          <img class="google-badge" src="/icons/google-logo.svg" alt="" aria-hidden="true" />
+          {{ 'AUTH.GOOGLE_SIGNIN_BUTTON' | translate }}
+        </button>
+
+        <div class="auth-links">
+          <a routerLink="/auth/forgot-password">{{ 'AUTH.FORGOT_PASSWORD_LINK' | translate }}</a>
+          <a routerLink="/auth/signup">{{ 'AUTH.NO_ACCOUNT_LINK' | translate }}</a>
+        </div>
+      </div>
+    </section>
+  </section>
+</section>

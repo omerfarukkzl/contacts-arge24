@@ -1,4 +1,5 @@
 using Contacts.Api.Data;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,16 @@ public sealed class ContactsApiFactory : WebApplicationFactory<Program>
             {
                 services.Remove(serviceDescriptor);
             }
+
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = TestAuthHandler.SchemeName;
+                    options.DefaultChallengeScheme = TestAuthHandler.SchemeName;
+                })
+                .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
+                    TestAuthHandler.SchemeName,
+                    _ => { });
+            services.AddAuthorization();
 
             services.AddDbContext<ContactsDbContext>(options =>
                 options.UseInMemoryDatabase(databaseName));

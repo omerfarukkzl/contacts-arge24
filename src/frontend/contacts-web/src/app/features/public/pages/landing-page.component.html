@@ -1,0 +1,85 @@
+<section class="landing-shell fade-slide-in">
+  <section class="landing-content">
+    <header class="landing-hero page-hero">
+      <div class="landing-hero-top">
+        <span class="page-eyebrow">{{ 'LANDING.EYEBROW' | translate }}</span>
+
+        <div class="landing-language-switcher" role="group" [attr.aria-label]="'A11Y.LANGUAGE_SELECTOR' | translate">
+          <span>{{ 'LANDING.LANGUAGE_LABEL' | translate }}</span>
+
+          @for (language of supportedLanguages; track language) {
+            <button
+              type="button"
+              [class.active]="currentLanguage() === language"
+              (click)="switchLanguage(language)"
+            >
+              {{ language.toUpperCase() }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <h1>{{ 'LANDING.TITLE' | translate }}</h1>
+      <p>{{ 'LANDING.SUBTITLE' | translate }}</p>
+
+      <ul class="hero-badges">
+        <li>{{ 'LANDING.BADGE_PRIVATE' | translate }}</li>
+        <li>{{ 'LANDING.BADGE_LANGUAGE' | translate }}</li>
+        <li>{{ 'LANDING.BADGE_CSV' | translate }}</li>
+      </ul>
+
+      <div class="action-row">
+        <a routerLink="/auth/signup" class="btn btn-primary">{{ 'LANDING.CTA_SIGN_UP' | translate }}</a>
+        <a routerLink="/auth/login" class="btn btn-secondary">{{ 'LANDING.CTA_LOGIN' | translate }}</a>
+      </div>
+    </header>
+
+    <section class="surface-panel landing-panel">
+      <div class="panel-body info-grid">
+        <article class="info-card">
+          <h2>{{ 'LANDING.CARD_SCOPE_TITLE' | translate }}</h2>
+          <p>{{ 'LANDING.CARD_SCOPE_TEXT' | translate }}</p>
+        </article>
+
+        <article class="info-card">
+          <h2>{{ 'LANDING.CARD_FILTER_TITLE' | translate }}</h2>
+          <p>{{ 'LANDING.CARD_FILTER_TEXT' | translate }}</p>
+        </article>
+
+        <article class="info-card">
+          <h2>{{ 'LANDING.CARD_IMPORT_TITLE' | translate }}</h2>
+          <p>{{ 'LANDING.CARD_IMPORT_TEXT' | translate }}</p>
+        </article>
+
+        <article class="info-card">
+          <h2>{{ 'LANDING.CARD_SECURITY_TITLE' | translate }}</h2>
+          <p>{{ 'LANDING.CARD_SECURITY_TEXT' | translate }}</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="surface-panel landing-panel">
+      <div class="panel-body workflow-panel">
+        <header class="workflow-header">
+          <span class="page-eyebrow">{{ 'LANDING.WORKFLOW_EYEBROW' | translate }}</span>
+          <h2>{{ 'LANDING.WORKFLOW_TITLE' | translate }}</h2>
+        </header>
+
+        <ol class="workflow-steps">
+          <li>
+            <strong>{{ 'LANDING.WORKFLOW_STEP_1_TITLE' | translate }}</strong>
+            <p>{{ 'LANDING.WORKFLOW_STEP_1_TEXT' | translate }}</p>
+          </li>
+          <li>
+            <strong>{{ 'LANDING.WORKFLOW_STEP_2_TITLE' | translate }}</strong>
+            <p>{{ 'LANDING.WORKFLOW_STEP_2_TEXT' | translate }}</p>
+          </li>
+          <li>
+            <strong>{{ 'LANDING.WORKFLOW_STEP_3_TITLE' | translate }}</strong>
+            <p>{{ 'LANDING.WORKFLOW_STEP_3_TEXT' | translate }}</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+  </section>
+</section>

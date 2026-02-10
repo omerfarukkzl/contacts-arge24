@@ -4,5 +4,9 @@ namespace Contacts.Api.Services;
 
 public interface ITagService
 {
-    Task SyncContactTagsAsync(Contact contact, IEnumerable<string>? rawTagNames, CancellationToken cancellationToken);
+    Task SyncContactTagsAsync(
+        Contact contact,
+        Guid ownerUserId,
+        IEnumerable<string>? rawTagNames,
+        CancellationToken cancellationToken);
 }

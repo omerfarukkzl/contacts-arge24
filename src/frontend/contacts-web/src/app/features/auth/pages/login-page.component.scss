@@ -1,0 +1,68 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.auth-shell {
+  min-height: 100dvh;
+  display: grid;
+  align-items: center;
+  padding: clamp(1rem, 4vw, 2.8rem);
+}
+
+.auth-stack {
+  width: min(520px, 100%);
+  margin-inline: auto;
+}
+
+.auth-panel-body {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.auth-form {
+  display: grid;
+  gap: 0.72rem;
+}
+
+.auth-form label {
+  display: grid;
+  gap: 0.34rem;
+}
+
+.auth-form span {
+  color: var(--ink-700);
+  font-size: 0.79rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.auth-links {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.auth-links a {
+  color: var(--ink-700);
+  font-size: 0.9rem;
+}
+
+.auth-divider {
+  margin: 0.1rem 0;
+  text-align: center;
+  color: var(--ink-600);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.google-signin-btn {
+  width: 100%;
+}
+
+.google-badge {
+  display: block;
+  width: 1.15rem;
+  height: 1.15rem;
+  flex: 0 0 1.15rem;
+}

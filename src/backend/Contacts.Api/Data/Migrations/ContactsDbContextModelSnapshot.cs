@@ -4,7 +4,6 @@ using Contacts.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
@@ -21,6 +20,40 @@ namespace Contacts.Api.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Contacts.Api.Domain.Entities.AppUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DisplayName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("FirebaseUid")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTime>("LastSeenAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FirebaseUid")
+                        .IsUnique()
+                        .HasDatabaseName("IX_AppUsers_FirebaseUid");
+
+                    b.ToTable("AppUsers", (string)null);
+                });
 
             modelBuilder.Entity("Contacts.Api.Domain.Entities.Contact", b =>
                 {
@@ -65,6 +98,9 @@ namespace Contacts.Api.Data.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("OwnerUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -81,9 +117,12 @@ namespace Contacts.Api.Data.Migrations
                     b.HasIndex("IsFavorite")
                         .HasDatabaseName("IX_Contacts_IsFavorite");
 
-                    b.HasIndex("Phone")
+                    b.HasIndex("OwnerUserId")
+                        .HasDatabaseName("IX_Contacts_OwnerUserId");
+
+                    b.HasIndex("OwnerUserId", "Phone")
                         .IsUnique()
-                        .HasDatabaseName("IX_Contacts_Phone")
+                        .HasDatabaseName("IX_Contacts_OwnerUserId_Phone")
                         .HasFilter("[IsDeleted] = 0");
 
                     b.ToTable("Contacts", (string)null);
@@ -117,12 +156,30 @@ namespace Contacts.Api.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<Guid>("OwnerUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
+                    b.HasIndex("OwnerUserId")
+                        .HasDatabaseName("IX_Tags_OwnerUserId");
+
+                    b.HasIndex("OwnerUserId", "Name")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Tags_OwnerUserId_Name");
 
                     b.ToTable("Tags", (string)null);
+                });
+
+            modelBuilder.Entity("Contacts.Api.Domain.Entities.Contact", b =>
+                {
+                    b.HasOne("Contacts.Api.Domain.Entities.AppUser", "OwnerUser")
+                        .WithMany("Contacts")
+                        .HasForeignKey("OwnerUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OwnerUser");
                 });
 
             modelBuilder.Entity("Contacts.Api.Domain.Entities.ContactTag", b =>
@@ -142,6 +199,24 @@ namespace Contacts.Api.Data.Migrations
                     b.Navigation("Contact");
 
                     b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("Contacts.Api.Domain.Entities.Tag", b =>
+                {
+                    b.HasOne("Contacts.Api.Domain.Entities.AppUser", "OwnerUser")
+                        .WithMany("Tags")
+                        .HasForeignKey("OwnerUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("OwnerUser");
+                });
+
+            modelBuilder.Entity("Contacts.Api.Domain.Entities.AppUser", b =>
+                {
+                    b.Navigation("Contacts");
+
+                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("Contacts.Api.Domain.Entities.Contact", b =>

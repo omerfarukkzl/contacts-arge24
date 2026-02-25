@@ -3,7 +3,7 @@
 ## 1) Overview
 
 `Contacts.Api` is a .NET Web API that powers the phone-book domain.
-It exposes contact/tag endpoints, supports CSV import/export, and persists data in SQL Server.
+It exposes contact/tag endpoints, supports CSV import/export, and persists data in PostgreSQL.
 
 Location:
 - `src/backend/Contacts.Api`
@@ -24,7 +24,7 @@ Location:
 
 - .NET `10.0`
 - ASP.NET Core Web API
-- Entity Framework Core `10.0` with SQL Server provider
+- Entity Framework Core `10.0` with PostgreSQL provider (Npgsql)
 - AutoMapper for entity -> DTO mapping
 - FluentValidation for request validation
 - CsvHelper for CSV read/write
@@ -36,7 +36,7 @@ Location:
 | `AutoMapper.Extensions.Microsoft.DependencyInjection` | `12.0.1` | AutoMapper DI integration |
 | `CsvHelper` | `33.0.1` | CSV import/export handling |
 | `FluentValidation.AspNetCore` | `11.3.1` | Request validation pipeline |
-| `Microsoft.EntityFrameworkCore.SqlServer` | `10.0.0` | SQL Server ORM provider |
+| `Npgsql.EntityFrameworkCore.PostgreSQL` | `10.0.0` | PostgreSQL ORM provider |
 | `Microsoft.EntityFrameworkCore.Design` | `10.0.0` | EF tooling/migrations support |
 
 ## 5) Project Structure
@@ -128,7 +128,7 @@ Additional business checks in controllers/services:
 - Many-to-many relation between contacts and tags
 
 EF configuration highlights:
-- Unique filtered index on `Contacts.Phone` where `IsDeleted = 0`
+- Unique filtered index on `Contacts.(OwnerUserId, Phone)` where `IsDeleted = false`
 - Query filter to exclude soft-deleted contacts by default
 - Indexes on `IsDeleted` and `IsFavorite`
 
@@ -143,7 +143,7 @@ Important keys:
 - `Cors:AllowedOrigins`
 
 Startup wiring (`Program.cs`):
-- SQL Server DbContext registration
+- PostgreSQL DbContext registration
 - AutoMapper registration
 - FluentValidation auto-validation + validator scan
 - CORS policy named `Frontend`
@@ -181,7 +181,6 @@ API Dockerfile:
 - `src/backend/Contacts.Api/Dockerfile`
 
 With root `docker-compose.yml`:
-- SQL Server exposed on `1433`
+- PostgreSQL exposed on `5432`
 - API exposed on `5050`
 - `Database__ApplyMigrationsOnStartup=true` in container environment
-

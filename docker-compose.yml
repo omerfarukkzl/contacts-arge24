@@ -1,16 +1,15 @@
-version: '3.9'
-
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: contacts-sqlserver
+  postgres:
+    image: postgres:16-alpine
+    container_name: contacts-postgres
     environment:
-      ACCEPT_EULA: 'Y'
-      MSSQL_SA_PASSWORD: Your_strong_password123
+      POSTGRES_DB: ContactsArge24
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
-      - '1433:1433'
+      - '5432:5432'
     volumes:
-      - sqlserver-data:/var/opt/mssql
+      - postgres-data:/var/lib/postgresql/data
 
   api:
     build:
@@ -20,12 +19,12 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:5050
-      ConnectionStrings__DefaultConnection: Server=sqlserver,1433;Database=ContactsArge24;User Id=sa;Password=Your_strong_password123;TrustServerCertificate=True;Encrypt=False
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=ContactsArge24;Username=postgres;Password=postgres
       Database__ApplyMigrationsOnStartup: 'true'
     ports:
       - '5050:5050'
     depends_on:
-      - sqlserver
+      - postgres
 
   web:
     build:
@@ -38,4 +37,4 @@ services:
       - api
 
 volumes:
-  sqlserver-data:
+  postgres-data:

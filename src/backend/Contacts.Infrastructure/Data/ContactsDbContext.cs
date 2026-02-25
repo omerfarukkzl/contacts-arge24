@@ -42,7 +42,7 @@ public sealed class ContactsDbContext(DbContextOptions<ContactsDbContext> option
             entity.HasIndex(x => new { x.OwnerUserId, x.Phone })
                 .IsUnique()
                 .HasDatabaseName("IX_Contacts_OwnerUserId_Phone")
-                .HasFilter("[IsDeleted] = 0");
+                .HasFilter("\"IsDeleted\" = false");
             entity.HasIndex(x => x.OwnerUserId).HasDatabaseName("IX_Contacts_OwnerUserId");
             entity.HasIndex(x => x.IsDeleted).HasDatabaseName("IX_Contacts_IsDeleted");
             entity.HasIndex(x => x.IsFavorite).HasDatabaseName("IX_Contacts_IsFavorite");

@@ -2,7 +2,7 @@
 
 Contacts ARGE24 is a phone book web application built with:
 
-- SQL Server (Docker)
+- PostgreSQL (Docker)
 - .NET 10 Web API
 - Angular 21 (standalone + signals + typed forms)
 
@@ -25,7 +25,7 @@ Contacts ARGE24 is a phone book web application built with:
 - `src/backend/Contacts.Api` -> .NET Web API
 - `src/frontend/contacts-web` -> Angular UI
 - `tests/Contacts.Api.Tests` -> API unit/integration tests
-- `docker-compose.yml` -> SQL Server + API + Web containers
+- `docker-compose.yml` -> PostgreSQL + API + Web containers
 
 ## Component Documentation
 
@@ -34,10 +34,10 @@ Contacts ARGE24 is a phone book web application built with:
 
 ## Local Run (without Docker)
 
-1. Start SQL Server container:
+1. Start PostgreSQL container:
 
 ```bash
-docker compose up -d sqlserver
+docker compose up -d postgres
 ```
 
 2. Run API:

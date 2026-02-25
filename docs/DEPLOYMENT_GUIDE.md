@@ -11,21 +11,24 @@ Projenizi ücretsiz olarak yayına almak için aşağıdaki adımları takip edi
     ```
 
 ## 2. Backend Deployment (Render.com)
-1.  [Render Dashboard](https://dashboard.render.com/)'a gidin ve **"New + -> Web Service"** seçin.
-2.  GitHub hesabınızı bağlayın ve bu projeyi seçin.
-3.  Ayarları şöyle yapın:
+1.  [Render Dashboard](https://dashboard.render.com/)'a gidin ve önce **"New + -> PostgreSQL"** seçin.
+2.  PostgreSQL servisini oluşturun (`Name: contacts-db`, `Database: contactsarge24`, `User: contactsuser` gibi).
+3.  PostgreSQL oluşturulunca **External Database URL** veya **Connection String** bilgisini kopyalayın.
+4.  Ardından **"New + -> Web Service"** seçin.
+5.  GitHub hesabınızı bağlayın ve bu projeyi seçin.
+6.  Ayarları şöyle yapın:
     *   **Name:** `contacts-api` (veya istediğiniz bir isim)
     *   **Runtime:** `Docker`
     *   **Region:** `Frankfurt` (veya size yakın olan)
     *   **Branch:** `main` (veya `master`)
     *   **Root Directory:** (Boş bırakın - böylece proje ana dizini Build Context olur)
     *   **Dockerfile Path:** `./src/backend/Contacts.Api/Dockerfile` (Çok Önemli! Dockerfile'ı buradan bulacak)
-4.  Sayfanın altındaki **"Environment Variables"** kısmına şu değişkenleri ekleyin (önce `Add Environment Variable`'a basın):
-    *   **Key:** `ConnectionStrings__DefaultConnection` -> **Value:** (Azure SQL Connection String'inizi buraya yapıştırın)
+7.  Sayfanın altındaki **"Environment Variables"** kısmına şu değişkenleri ekleyin (önce `Add Environment Variable`'a basın):
+    *   **Key:** `ConnectionStrings__DefaultConnection` -> **Value:** (Render PostgreSQL connection string'inizi buraya yapıştırın)
     *   **Key:** `ASPNETCORE_ENVIRONMENT` -> **Value:** `Production`
     *   **Key:** `ASPNETCORE_URLS` -> **Value:** `http://+:5050`
-5.  **"Create Web Service"** butonuna basın.
-6.  Deployment bitince size `https://contacts-api-xxxx.onrender.com` gibi bir URL verecek. **Bu URL'i kopyalayın.**
+8.  **"Create Web Service"** butonuna basın.
+9.  Deployment bitince size `https://contacts-api-xxxx.onrender.com` gibi bir URL verecek. **Bu URL'i kopyalayın.**
 
 ## 3. Frontend Konfigürasyonu (Build URL'i Ekleme)
 1.  Kendi bilgisayarınızda `src/frontend/contacts-web/src/environments/environment.prod.ts` dosyasını açın.

@@ -7,7 +7,7 @@
 | **Proje Adı** | Contacts ARGE24 |
 | **Versiyon** | 1.1 |
 | **Tarih** | 2026-02-09 |
-| **Teknoloji Stack** | SQL Server (Docker) + .NET Core Web API + Angular |
+| **Teknoloji Stack** | PostgreSQL (Docker) + .NET Core Web API + Angular |
 
 ---
 
@@ -118,7 +118,7 @@ Günlük rehberini web'den tutmak isteyen kullanıcı/ekip.
 | NFR-002 | Validasyon | Backend zorunlu; frontend UX için |
 | NFR-003 | Loglama | API istekleri ve hata logları (console minimum) |
 | NFR-004 | Güvenlik | Input sanitization, düzgün hata mesajı (stack trace dönme) |
-| NFR-005 | Docker | SQL Server Docker'da çalışır |
+| NFR-005 | Docker | PostgreSQL Docker'da çalışır |
 | NFR-006 | Test | API için unit/integration test |
 | NFR-007 | i18n | Angular i18n veya ngx-translate ile çoklu dil |
 
@@ -272,7 +272,7 @@ PRIMARY KEY (ContactId, TagId)
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                       Database                               │
-│              SQL Server 2022 (Docker - Port 1433)            │
+│              PostgreSQL 16 (Docker - Port 5432)              │
 └─────────────────────────────────────────────────────────────┘
 ```
 
